@@ -1,0 +1,254 @@
+@font-face {
+    font-family: 'HONORSansArabicUI';
+    src: url('Font/alfont_com_HONORSansArabicUI-R.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body, h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, select {
+    font-family: 'HONORSansArabicUI', Arial, sans-serif !important;}
+
+body  {
+    background: linear-gradient(to right, #4C9F9F, #5FAD56);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: #6FA16B;
+
+}
+
+.login-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px;
+}
+
+.logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #6FA16B;
+    margin: 0;
+}
+
+.subtitle {
+    color: #4C9F9F;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.form-container {
+    background: #F5F5F5;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.form-container h3 {
+    color: #236C8F;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    background: linear-gradient(to right, #6FA16B, #5198B7);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+a {
+    display: block;
+    margin-top: 10px;
+    color: #2E7D32;
+    text-decoration: none;
+}
+.register-options {
+    display: flex;
+    justify-content: center; /* يجعل الأزرار في المنتصف */
+    gap: 10px; /* مسافة بين الزرين */
+    margin-top: 15px;
+}
+
+.register-options a {
+    flex: 1; /* يجعل الأزرار بنفس العرض */
+    text-decoration: none; /* إزالة أي تأثير على الروابط */
+}
+
+.register-options button {
+    width: 100%; /* يجعل الأزرار بنفس العرض */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 160px; /* يضمن أن الأزرار ليست صغيرة جدًا */
+    max-width: 200px; /* يضمن أن الأزرار لا تكون طويلة أكثر من اللازم */
+}
+
+.register-options img {
+    width: 20px;
+    margin-right: 5px;
+}
+.volunteer-btn {
+    background: linear-gradient(to right, #6FA16B, #5198B7);
+
+}
+
+
+
+/* زر تسجيل الدخول في الأعلى */
+.top-right {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 16px;
+}
+
+.login-btn {
+    background: white;
+    border: 2px solid #5FAD56;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #2E7D32;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #5FAD56;
+    color: white;
+}
+
+/* صندوق التسجيل */
+.register-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+}
+
+.icon {
+    width: 50px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #5198B7;
+    margin: 10px 0;
+}
+
+/* تنسيق الحقول */
+.form-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+
+/* زر إنشاء الحساب */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(to right, #6FA16B, #5198B7);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.submit-btn:hover {
+    opacity: 0.8;
+}
+
+/* إعداد الشعار في أعلى اليسار */
+.top-left {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+.logo {
+    width: 200px;
+}
+
+.logo-login
+{
+    width: 100px;
+}
+h1 {
+    margin-top: 0; /* إزالة أي مسافة علوية إضافية */}
+
+/* زر تسجيل الدخول في أعلى اليمين */
+.top-right {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 16px;
+}
+
+/* زر تسجيل الدخول */
+.login-btn {
+    background: white;
+    border: 2px solid #5FAD56;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #2E7D32;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #5FAD56;
+    color: white;
+}
+
+.register-page {
+    background: url('Images/Background.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
