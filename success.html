@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم تغيير كلمة المرور</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'HONORSansArabicUI', Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('pagebg.png') no-repeat center center fixed;
+        }
+        .logo {
+            width: 200px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .success-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .success-box img {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        .success-box h2 {
+            color: #004080;
+            margin-bottom: 15px;
+        }
+        .success-box p {
+            font-size: 16px;
+            color: #333;
+        }
+        .login-btn {
+            background: linear-gradient(to right, #5BA585, #3D7E64);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo-removebg-preview.png" alt="عون Awn" class="logo">
+    </header>
+    <div class="success-box">
+        <img src="check.png" alt="نجاح">
+        <h2>تم تغيير كلمة المرور بنجاح</h2>
+        <button class="login-btn" onclick="goToLogin()">تسجيل الدخول</button>
+    </div>
+    <script>
+        function goToLogin() {
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+</body>
+</html>
