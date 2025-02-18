@@ -1,0 +1,149 @@
+<!DOCTYPE html> 
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استرجاع كلمة المرور - عون</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @font-face { 
+            font-family: 'HONORSansArabicUI';
+             src: url('alfont_com_HONORSansArabicUI-R.ttf') format('truetype'); 
+             font-weight: normal; 
+             font-style: normal; 
+        }
+        body {
+            font-family: 'HONORSansArabicUI' Arial, sans-serif;
+            background:  url('pagebg.png') no-repeat center center fixed;
+            text-align: center;
+            direction: rtl;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .logo {
+            width: 200px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .login-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .login-text {
+            color: #004080;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .login-btn {
+            background: none;
+            border: 2px solid #004080;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #004080;
+            font-weight: bold;
+        }
+        .reset-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+            position: relative;
+        }
+        .lock-icon {
+            font-size: 40px;
+            color: #004080;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #004080;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            text-align: right;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: linear-gradient(to right, #5BA585, #3D7E64);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <img src="logo-removebg-preview.png" alt="عون Awn" class="logo">
+        <div class="login-container">
+            <span class="login-text">لديك حساب بالفعل؟</span>
+            <a href="#" class="login-btn">تسجيل الدخول</a>
+        </div>
+    </header>
+    <div class="reset-box">
+        <img src="Layer_1.png" alt="رمز استرجاع كلمة المرور" class="reset-img">
+        <h2>استرجاع كلمة المرور</h2>
+        <form id="reset-form">
+            <label for="new-password">كلمة المرور الجديدة</label>
+            <input type="password" id="new-password" required>
+            
+            <label for="confirm-password">تأكيد كلمة المرور</label>
+            <input type="password" id="confirm-password" required>
+            
+            <button type="button" onclick="goToVerificationPage()">التالي</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("reset-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let password = document.getElementById("new-password").value;
+            let confirmPassword = document.getElementById("confirm-password").value;
+            
+            if (password.length < 6) {
+                alert("يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.");
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert("كلمتا المرور غير متطابقتين.");
+                return;
+            }
+            
+            alert("تم تغيير كلمة المرور بنجاح!");
+        });
+        
+    </script>
+    <script>
+        function goToVerificationPage() {
+            window.location.href = "verification.html"; // Redirects to the second page
+        }
+    </script>
+    
+</body>
+</html>         
+

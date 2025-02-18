@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحقق من الرمز - عون</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'HONORSansArabicUI', Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('pagebg.png') no-repeat center center fixed;
+        }
+        .reset-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        .logo {
+            width: 200px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .code-input {
+            display: flex;
+            justify-content: space-evenly;
+            direction: ltr;
+        }
+        .code-input input {
+            width: 45px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .timer {
+            margin: 10px 0;
+            color: #004080;
+            font-weight: bold;
+        }
+        .resend-btn {
+            background: none;
+            border: none;
+            color: #004080;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+        button {
+            background: linear-gradient(to right, #5BA585, #3D7E64);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo-removebg-preview.png" alt="عون Awn" class="logo">
+    </header>
+    <div class="reset-box">
+        <h2>التحقق من الرمز</h2>
+        <p>ادخل رمز التحقق المرسل الى رقم هاتفك</p>
+        <div class="code-input">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+        </div>
+        <div class="timer" id="timer">5:00</div>
+        <button class="resend-btn" id="resend-btn" onclick="resendCode()">إعادة الإرسال</button>
+        <button onclick="verifyCode()">التالي</button>
+    </div>
+    <script>
+        let timeLeft = 300;
+        let timerElement = document.getElementById("timer");
+        let resendButton = document.getElementById("resend-btn");
+
+        function startTimer() {
+            let timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timeLeft--;
+                if (timeLeft < 0) {
+                    clearInterval(timerInterval);
+                    timerElement.style.display = "none";
+                    resendButton.style.display = "inline";
+                }
+            }, 1000);
+        }
+
+        function resendCode() {
+            alert("تم إرسال الرمز من جديد!");
+            timeLeft = 300;
+            timerElement.style.display = "block";
+            resendButton.style.display = "none";
+            startTimer();
+        }
+
+    function verifyCode() {
+      
+        window.location.href = "success.html"; 
+    }
+
+
+
+        startTimer();
+    </script>
+</body>
+</html>
