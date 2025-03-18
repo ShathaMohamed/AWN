@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج عطاء - نظام إدارة المتطوعين</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Prevent double scrollbars */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row; /* For RTL */
+            overflow: hidden; /* Prevent double scrollbars */
+        }
+        
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-point {
+            width: 16px;
+            height: 16px;
+            background-color: #4a5568;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .progress-point.start {
+            left: 0;
+            background-color: #68d391;
+        }
+        
+        .progress-point.middle {
+            left: 50%;
+        }
+        
+        .progress-point.end {
+            left: 100%;
+        }
+        
+        .progress-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            text-align: center;
+        }
+        
+        .exit-button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Employees Section */
+        .employees-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .button-primary {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+        
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .employee-table th,
+        .employee-table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .employee-table th {
+            background-color: #f9fafb;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .action-cell {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .table-icon-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #4a8db7, #5aaa75);
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0 20px 0 0; /* Changed for RTL */
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sidebar-logo::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 20px auto 0;
+        }
+        
+        .sidebar-menu {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 25px;
+            cursor: pointer;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .menu-text {
+            font-weight: 500;
+            font-size: 17px;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .tech-support {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            text-align: right;
+        }
+        
+        .support-email {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        /* Scrollable dropdown menu */
+        #dropdownMenu {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .employee-selector::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .employee-selector {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Ellipse 5.png" alt="برنامج عطاء">
+                <div class="sidebar-logo-text">برنامج عطاء</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item" id="homeBtn">
+                    <span class="menu-text">الصفحة الرئيسية</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="scheduleBtn">
+                    <span class="menu-text">جدول البرنامج</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="volunteersBtn">
+                    <span class="menu-text">المتطوعين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item active" id="employeesBtn">
+                    <span class="menu-text">الموظفين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="attendanceBtn">
+                    <span class="menu-text">متابعة الحضور والغياب</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>               
+                <div class="menu-item" id="qrCodeBtn">
+                    <span class="menu-text">عرض QR Code</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="8" y1="9" x2="16" y2="9"></line>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="17" x2="16" y2="17"></line>
+                        </svg>
+                    </span>
+                </div> 
+                <div class="menu-item" id="newProgramBtn">
+                    <span class="menu-text">إنشاء برنامج جديد</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="tech-support">الدعم الفني</div>
+                <a href="mailto:Awminfo@gmail.com" class="support-email">
+                    Awminfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="header">
+                <div class="logo-header">
+                    برنامج عطاء
+                </div>
+                <div class="user-actions">
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div style="position: relative; flex: 1;">
+                    <div class="progress-bar">
+                        <div class="progress-point start"></div>
+                        <div class="progress-point middle"></div>
+                        <div class="progress-point end"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <div class="progress-label">البداية</div>
+                        <div class="progress-label">النهاية</div>
+                    </div>
+                </div>
+                <div style="width: 30px;"></div>
+                <button class="exit-button">تسجيل الخروج</button>
+            </div>
+            
+            <div class="employees-section">
+                <div class="section-header">
+                    <div class="section-title">الموظفين</div>
+                    <div class="action-buttons">
+                        <button class="button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            تنزيل ملف Excel
+                        </button>
+                        <button class="button button-primary" id="issueCertificateBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                            إصدار شهادة
+                        </button>
+                        <button class="button button-primary" id="addEmployeeBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                            إضافة موظف
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="employee-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الدور</th>
+                            <th>الهوية الوطنية</th>
+                            <th>البريد الالكتروني</th>
+                            <th>رقم الهاتف</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    شهد محمد فهد
+                                </div>
+                            </td>
+                            <td>إضافة متطوعين</td>
+                            <td>1146348216</td>
+                            <td>shahad@gmail.com</td>
+                            <td>0555237592</td>
+                            <td class="action-cell">
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    سلوى ناصر حمد
+                                </div>
+                            </td>
+                            <td>عرض QR Code</td>
+                            <td>1161331116</td>
+                            <td>Salwa@gmail.com</td>
+                            <td>0555237592</td>
+                            <td class="action-cell">
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    فاطمة عبدالرحمن عبدالله
+                                </div>
+                            </td>
+                            <td>إسناد المهام<br>إدارة المتطوعين</td>
+                            <td>1136368616</td>
+                            <td>Fatima@gmail.com</td>
+                            <td>0555237592</td>
+                            <td class="action-cell">
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="user-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    سارة فهد عبدالله
+                                </div>
+                            </td>
+                            <td>تسليم الشهادات</td>
+                            <td>1225938216</td>
+                            <td>Sara@gmail.com</td>
+                            <td>0555237592</td>
+                            <td class="action-cell">
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="table-icon-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for adding new employee -->
+    <div class="modal-overlay" id="addEmployeeModal">
+        <div class="modal-container" style="width: 400px; max-height: 530px; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background-color: white;">
+            <div style="padding: 20px;">
+                <div class="form-group" style="text-align: right; margin-bottom: 12px;">
+                    <label class="form-label" style="display: block; margin-bottom: 8px; font-weight: 500;">اسم الموظف</label>
+                    <input type="text" id="employeeName" class="form-control" style="height: 40px; border-radius: 25px; border: 1px solid #e2e8f0; padding: 0 15px; font-size: 16px; width: 100%;">
+                </div>
+                
+                <div class="form-group" style="text-align: right; margin-bottom: 12px;">
+                    <label class="form-label" style="display: block; margin-bottom: 8px; font-weight: 500;">الهوية الوطنية</label>
+                    <input type="text" id="employeeID" class="form-control" style="height: 40px; border-radius: 25px; border: 1px solid #e2e8f0; padding: 0 15px; font-size: 16px; width: 100%;">
+                </div>
+                
+                <div class="form-group" style="text-align: right; margin-bottom: 12px;">
+                    <label class="form-label" style="display: block; margin-bottom: 8px; font-weight: 500;">البريد الالكتروني</label>
+                    <input type="email" id="employeeEmail" class="form-control" style="height: 40px; border-radius: 25px; border: 1px solid #e2e8f0; padding: 0 15px; font-size: 16px; width: 100%;">
+                </div>
+                
+                <div class="form-group" style="text-align: right; margin-bottom: 12px;">
+                    <label class="form-label" style="display: block; margin-bottom: 8px; font-weight: 500;">رقم الهاتف</label>
+                    <input type="text" id="employeePhone" class="form-control" style="height: 40px; border-radius: 25px; border: 1px solid #e2e8f0; padding: 0 15px; font-size: 16px; width: 100%;">
+                </div>
+                
+                <div class="form-group" style="text-align: right; margin-bottom: 15px; position: relative;">
+                    <label class="form-label" style="display: block; margin-bottom: 8px; font-weight: 500;">الدور</label>
+                    <div onclick="toggleDropdown(event)" style="position: relative; cursor: pointer;">
+                        <div id="dropdownDisplay" style="height: 40px; border-radius: 25px; border: 1px solid #e2e8f0; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; background: white;">
+                            <span id="roleText">اختر الدور</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div id="dropdownMenu" style="display: none; position: absolute; top: 100%; right: 0; left: 0; z-index: 1000; background: white; border: 1px solid #e2e8f0; border-radius: 10px; margin-top: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto;">
+                            <div class="dropdown-item" onclick="handleOption(event, 'role1')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">إسناد المهام</label>
+                                <input type="checkbox" id="role1" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role2')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">عرض QR Code</label>
+                                <input type="checkbox" id="role2" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role3')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">تسليم الشهادات</label>
+                                <input type="checkbox" id="role3" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role4')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">إضافة المتطوعين</label>
+                                <input type="checkbox" id="role4" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role5')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">إدارة الهيكلة</label>
+                                <input type="checkbox" id="role5" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role6')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">عرض التقارير</label>
+                                <input type="checkbox" id="role6" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role7')" style="padding: 10px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">إدارة جدول البرنامج</label>
+                                <input type="checkbox" id="role7" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="dropdown-item" onclick="handleOption(event, 'role8')" style="padding: 10px 15px; display: flex; justify-content: flex-end; align-items: center;">
+                                <label style="margin-right: 10px;">متابعة الحضور والغياب</label>
+                                <input type="checkbox" id="role8" onclick="event.stopPropagation()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 10px;">
+                    <button id="addBtn" style="background-color: #4A9DBF; color: white; border: none; border-radius: 25px; padding: 10px 40px; font-weight: bold; cursor: pointer; font-size: 16px; width: 180px;">
+                        اضافة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- First overlay - Employee selection for certificate -->
+    <div class="modal-overlay" id="certificateEmployeeModal">
+        <div class="modal-container" style="width: 400px; max-height: 530px; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background-color: white;">
+            <div style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <span class="close-modal" style="cursor: pointer;">&times;</span>
+                    <h3 style="text-align: center; flex-grow: 1; margin: 0;">تسليم الشهادة الى</h3>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <input type="text" class="search-box" placeholder="بحث..." style="width: 100%; margin-bottom: 15px;">
+                    
+                    <div class="employee-selector" style="max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                        <div class="employee-option" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <input type="checkbox" id="selectAll">
+                            <label for="selectAll">تحديد الكل</label>
+                        </div>
+                        
+                        <div class="employee-option" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <input type="checkbox" id="emp1">
+                            <label for="emp1">شهد محمد فهد</label>
+                        </div>
+                        
+                        <div class="employee-option" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <input type="checkbox" id="emp2">
+                            <label for="emp2">سلوى ناصر حمد</label>
+                        </div>
+                        
+                        <div class="employee-option" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <input type="checkbox" id="emp3">
+                            <label for="emp3">فاطمة عبدالرحمن عبدالله</label>
+                        </div>
+                        
+                        <div class="employee-option" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <input type="checkbox" id="emp4">
+                            <label for="emp4">سارة فهد عبدالله</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <button id="closeModalBtn" style="background-color: #eee; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                        رجوع
+                    </button>
+                    <button id="nextBtn1" style="background-color: #4A9DBF; color: white; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                        التالي
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second overlay - Template selection -->
+    <div class="modal-overlay" id="certificateTemplateModal">
+        <div class="modal-container" style="width: 400px; max-height: 530px; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background-color: white;">
+            <div style="padding: 20px; text-align: right;">
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+                    <span class="close-modal" style="cursor: pointer;">&times;</span>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <label for="pdfUpload" class="cert-option" style="width: 100%; background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        تنزيل الشهادة PDF
+                    </label>
+                    <input id="pdfUpload" type="file" accept=".pdf" style="display: none;">
+                    
+                    <button id="useTemplateBtn" class="cert-option" style="width: 100%; background-color: #f8f9fa; border: 1px solid #4A9DBF; border-radius: 5px; padding: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #4A9DBF;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span>استخدام قالب جاهز من منصة عون</span>
+                        <span style="margin-right: 5px; font-size: 12px; color: #888;">معاينة</span>
+                    </button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <button id="prevBtn1" style="background-color: #eee; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                        السابق
+                    </button>
+                    <button id="nextBtn2" style="background-color: #4A9DBF; color: white; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                        التالي
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third overlay - Certificate preview -->
+    <div class="modal-overlay" id="certificatePreviewModal">
+        <div class="modal-container" style="width: 400px; max-height: 530px; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background-color: white;">
+            <div style="padding: 20px; text-align: right;">
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+                    <span class="close-modal" style="cursor: pointer;">&times;</span>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 20px;">
+                        <div style="background-color: white; position: relative; height: 270px; width: 100%; display: flex; justify-content: center;">
+                            <!-- Certificate Template Preview -->
+                            <div style="width: 90%; height: 100%; position: relative; border: 1px solid #eee;">
+                                <div style="position: absolute; top: 0; right: 0; width: 50px; height: 50px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: white;">
+                                    <span style="font-size: 10px;">شعار</span>
+                                </div>
+                                
+                                <div style="position: absolute; top: 0; left: 0; width: 20%; height: 100%; background-color: #4caf50;"></div>
+                                <div style="position: absolute; bottom: 0; right: 0; width: 20%; height: 100%; background-color: #4caf50;"></div>
+                                
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
+                                    <h3 style="margin-bottom: 10px; font-size: 16px;">شهــــادة تقـديــــر</h3>
+                                    <p style="font-size: 12px; margin-bottom: 15px;">تشهد ادارة برنامج عون الصحي أن</p>
+                                    <p style="font-weight: bold; margin-bottom: 15px; font-size: 14px;">الاسم</p>
+                                    <p style="font-size: 10px; margin-bottom: 30px;">قد أتم متطلبات البرنامج بنجاج مما يؤهله للحصول على الشهادة المجتازة من المركز للإدارة التطوع</p>
+                                    <div style="border-top: 1px solid #000; width: 50px; margin: 0 auto;"></div>
+                                    <p style="font-size: 10px; margin-top: 5px;">توقيع</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                        <button id="prevBtn2" style="background-color: #eee; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                            السابق
+                        </button>
+                        <button id="submitCertificateBtn" style="background-color: #4A9DBF; color: white; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer;">
+                            تسليم
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fourth overlay - Success message -->
+    <div class="modal-overlay" id="certificateSuccessModal">
+        <div class="modal-container" style="width: 400px; max-height: 250px; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); background-color: white;">
+            <div style="padding: 20px; text-align: center;">
+                <p style="font-size: 18px; margin-bottom: 30px;">تم إرسال الشهادات بنجاح!</p>
+                
+                <button id="closeSuccessBtn" style="background-color: #4A9DBF; color: white; border: none; border-radius: 5px; padding: 8px 20px; cursor: pointer; width: 100px;">
+                    حسناً
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation to all available pages
+            document.getElementById('qrCodeBtn').addEventListener('click', function() {
+                window.location.href = 'qr.html';
+            });
+            // Home page
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = 'Home Page.html';
+            });
+            
+            // Employees page
+            document.getElementById('employeesBtn').addEventListener('click', function() {
+                window.location.href = 'Org2.html';
+            });
+            
+            // Attendance page
+            document.getElementById('attendanceBtn').addEventListener('click', function() {
+                window.location.href = 'attendance.html';
+            });
+            
+            // New program page
+            document.getElementById('newProgramBtn').addEventListener('click', function() {
+                window.location.href = 'NewProg.html';
+            });
+            
+            document.getElementById('volunteersBtn').addEventListener('click', function() {
+                window.location.href = 'volunteers.html';
+            });
+            document.getElementById('scheduleBtn').addEventListener('click', function() {
+                window.location.href = 'calendar.html';
+            });
+            const accountIcons = document.querySelectorAll('.icon-button svg[viewBox="0 0 24 24"]');
+    accountIcons.forEach(icon => {
+        const button = icon.closest('.icon-button');
+        if (button) {
+            button.id = 'accountBtn';
+            button.addEventListener('click', function() {
+                window.location.href = 'account.html';
+            });
+        }
+    });
+            // Logout button
+        // Add this code to the script section of all your pages
+
+// Logout button functionality
+document.querySelector('.exit-button').addEventListener('click', function() {
+    if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        // In a real application, you would clear any authentication tokens or cookies here
+        
+        // Example: Clear session storage
+        sessionStorage.clear();
+        
+        // Example: Clear local storage (if used for auth)
+        // localStorage.clear();
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
+});
+            
+            // Employee management functionality
+            const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+            const modal = document.getElementById('addEmployeeModal');
+            const addBtn = document.getElementById('addBtn');
+            const employeeTable = document.querySelector('.employee-table tbody');
+            
+            // Show modal when Add Employee button is clicked
+            addEmployeeBtn.addEventListener('click', function() {
+                modal.classList.add('active');
+            });
+            
+            // Close modal when clicking outside the modal content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.getElementById('dropdownMenu').style.display = 'none';
+                }
+            });
+            
+            // Add employee when clicking Add button
+            addBtn.addEventListener('click', function() {
+                const name = document.getElementById('employeeName').value;
+                const id = document.getElementById('employeeID').value;
+                const email = document.getElementById('employeeEmail').value;
+                const phone = document.getElementById('employeePhone').value;
+                
+                // Get selected roles
+                const selectedRoles = [];
+                for(let i = 1; i <= 8; i++) {
+                    const checkbox = document.getElementById('role' + i);
+                    if(checkbox && checkbox.checked) {
+                        selectedRoles.push(checkbox.parentElement.querySelector('label').textContent);
+                    }
+                }
+                
+                // Validate input
+                if (!name || !id || !email || !phone || selectedRoles.length === 0) {
+                    alert('الرجاء إدخال جميع المعلومات المطلوبة');
+                    return;
+                }
+                
+                // Create new table row
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            ${name}
+                        </div>
+                    </td>
+                    <td>${selectedRoles.join('<br>')}</td>
+                    <td>${id}</td>
+                    <td>${email}</td>
+                    <td>${phone}</td>
+                    <td class="action-cell">
+                        <button class="table-icon-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="table-icon-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                
+                // Add the new row to the table
+                employeeTable.appendChild(newRow);
+                
+                // Clear form and close modal
+                document.getElementById('employeeName').value = '';
+                document.getElementById('employeeID').value = '';
+                document.getElementById('employeeEmail').value = '';
+                document.getElementById('employeePhone').value = '';
+                for(let i = 1; i <= 8; i++) {
+                    const checkbox = document.getElementById('role' + i);
+                    if(checkbox) checkbox.checked = false;
+                }
+                document.getElementById('roleText').textContent = 'اختر الدور';
+                
+                modal.classList.remove('active');
+            });
+            
+            // Certificate functionality
+            // Get the modal elements
+            const certificateEmployeeModal = document.getElementById('certificateEmployeeModal');
+            const certificateTemplateModal = document.getElementById('certificateTemplateModal');
+            const certificatePreviewModal = document.getElementById('certificatePreviewModal');
+            const certificateSuccessModal = document.getElementById('certificateSuccessModal');
+
+            // Get the buttons
+            const issueCertificateBtn = document.getElementById('issueCertificateBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const nextBtn1 = document.getElementById('nextBtn1');
+            const prevBtn1 = document.getElementById('prevBtn1');
+            const nextBtn2 = document.getElementById('nextBtn2');
+            const prevBtn2 = document.getElementById('prevBtn2');
+            const useTemplateBtn = document.getElementById('useTemplateBtn');
+            const submitCertificateBtn = document.getElementById('submitCertificateBtn');
+            const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+            const pdfUpload = document.getElementById('pdfUpload');
+
+            // Get all close modal buttons
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+
+          // Show first modal when issue certificate button is clicked
+          issueCertificateBtn.addEventListener('click', function() {
+                certificateEmployeeModal.classList.add('active');
+            });
+
+            // Navigation between modals
+            closeModalBtn.addEventListener('click', function() {
+                certificateEmployeeModal.classList.remove('active');
+            });
+
+            nextBtn1.addEventListener('click', function() {
+                certificateEmployeeModal.classList.remove('active');
+                certificateTemplateModal.classList.add('active');
+            });
+
+            prevBtn1.addEventListener('click', function() {
+                certificateTemplateModal.classList.remove('active');
+                certificateEmployeeModal.classList.add('active');
+            });
+
+            nextBtn2.addEventListener('click', function() {
+                certificateTemplateModal.classList.remove('active');
+                certificatePreviewModal.classList.add('active');
+            });
+
+            prevBtn2.addEventListener('click', function() {
+                certificatePreviewModal.classList.remove('active');
+                certificateTemplateModal.classList.add('active');
+            });
+
+            // Show certificate preview when template is selected
+            useTemplateBtn.addEventListener('click', function() {
+                certificateTemplateModal.classList.remove('active');
+                certificatePreviewModal.classList.add('active');
+            });
+
+            // Handle PDF upload
+            pdfUpload.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    alert('تم اختيار الملف: ' + fileName);
+                    // Move to next step after file selection
+                    certificateTemplateModal.classList.remove('active');
+                    certificatePreviewModal.classList.add('active');
+                }
+            });
+
+            // Show success message when certificate is sent
+            submitCertificateBtn.addEventListener('click', function() {
+                certificatePreviewModal.classList.remove('active');
+                certificateSuccessModal.classList.add('active');
+            });
+
+            // Close success modal
+            closeSuccessBtn.addEventListener('click', function() {
+                certificateSuccessModal.classList.remove('active');
+            });
+
+            // Close any modal when the close button is clicked
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    certificateEmployeeModal.classList.remove('active');
+                    certificateTemplateModal.classList.remove('active');
+                    certificatePreviewModal.classList.remove('active');
+                    certificateSuccessModal.classList.remove('active');
+                });
+            });
+
+            // Close modal when clicking outside modal content
+            window.addEventListener('click', function(event) {
+                if (event.target === certificateEmployeeModal) {
+                    certificateEmployeeModal.classList.remove('active');
+                }
+                if (event.target === certificateTemplateModal) {
+                    certificateTemplateModal.classList.remove('active');
+                }
+                if (event.target === certificatePreviewModal) {
+                    certificatePreviewModal.classList.remove('active');
+                }
+                if (event.target === certificateSuccessModal) {
+                    certificateSuccessModal.classList.remove('active');
+                }
+            });
+
+            // Select All checkbox functionality
+            document.getElementById('selectAll').addEventListener('change', function() {
+                const isChecked = this.checked;
+                document.querySelectorAll('.employee-option input[type="checkbox"]').forEach(checkbox => {
+                    if (checkbox.id !== 'selectAll') {
+                        checkbox.checked = isChecked;
+                    }
+                });
+            });
+        });
+        
+        // Toggle dropdown menu
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Handle option selection
+        function handleOption(event, id) {
+            event.stopPropagation();
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+            updateRoleText();
+        }
+        
+        // Update role text based on selected options
+        function updateRoleText() {
+            const roles = [];
+            
+            for(let i = 1; i <= 8; i++) {
+                const checkbox = document.getElementById('role' + i);
+                if(checkbox && checkbox.checked) {
+                    roles.push(checkbox.parentElement.querySelector('label').textContent);
+                }
+            }
+            
+            document.getElementById('roleText').textContent = roles.length > 0 ? roles.join(', ') : 'اختر الدور';
+        }
+        
+        // Handle edit employee (pen icon)
+        document.querySelectorAll('.employee-table .table-icon-button:first-child').forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the row that contains this button
+                const row = this.closest('tr');
+                
+                // Extract employee data from the row
+                const name = row.querySelector('td:first-child').textContent.trim();
+                const role = row.querySelector('td:nth-child(2)').innerHTML.split('<br>'); // Handle multiple roles
+                const id = row.querySelector('td:nth-child(3)').textContent;
+                const email = row.querySelector('td:nth-child(4)').textContent;
+                const phone = row.querySelector('td:nth-child(5)').textContent;
+                
+                // Populate the modal with this data
+                document.getElementById('employeeName').value = name;
+                document.getElementById('employeeID').value = id;
+                document.getElementById('employeeEmail').value = email;
+                document.getElementById('employeePhone').value = phone;
+                
+                // Check the appropriate role checkboxes
+                for(let i = 1; i <= 8; i++) {
+                    const checkbox = document.getElementById('role' + i);
+                    if(checkbox) {
+                        const roleName = checkbox.parentElement.querySelector('label').textContent;
+                        checkbox.checked = role.includes(roleName);
+                    }
+                }
+                
+                // Update the role text display
+                updateRoleText();
+                
+                // Show the modal
+                document.getElementById('addEmployeeModal').classList.add('active');
+                
+                // Store the row for later to know which one to update
+                sessionStorage.setItem('editingRowIndex', Array.from(row.parentNode.children).indexOf(row));
+            });
+        });
+
+        // Handle delete employee (trash icon)
+        document.querySelectorAll('.employee-table .table-icon-button:last-child').forEach(button => {
+            button.addEventListener('click', function() {
+                if(confirm('هل أنت متأكد من حذف هذا الموظف؟')) {
+                    // Remove the row when confirmed
+                    this.closest('tr').remove();
+                }
+            });
+        });
+
+        // Modify the Add button click handler to handle edits too
+        const existingAddBtnHandler = document.getElementById('addBtn').onclick;
+        document.getElementById('addBtn').onclick = function() {
+            const editingIndex = sessionStorage.getItem('editingRowIndex');
+            
+            if(editingIndex !== null) {
+                // We're editing an existing row
+                const name = document.getElementById('employeeName').value;
+                const id = document.getElementById('employeeID').value;
+                const email = document.getElementById('employeeEmail').value;
+                const phone = document.getElementById('employeePhone').value;
+                
+                // Get selected roles
+                const selectedRoles = [];
+                for(let i = 1; i <= 8; i++) {
+                    const checkbox = document.getElementById('role' + i);
+                    if(checkbox && checkbox.checked) {
+                        selectedRoles.push(checkbox.parentElement.querySelector('label').textContent);
+                    }
+                }
+                
+                // Validate input
+                if (!name || !id || !email || !phone || selectedRoles.length === 0) {
+                    alert('الرجاء إدخال جميع المعلومات المطلوبة');
+                    return;
+                }
+                
+                // Get the row and update it
+                const rows = document.querySelectorAll('.employee-table tbody tr');
+                const row = rows[editingIndex];
+                
+                if(row) {
+                    row.querySelector('td:first-child div').textContent = name;
+                    row.querySelector('td:nth-child(2)').innerHTML = selectedRoles.join('<br>');
+                    row.querySelector('td:nth-child(3)').textContent = id;
+                    row.querySelector('td:nth-child(4)').textContent = email; 
+                    row.querySelector('td:nth-child(5)').textContent = phone;
+                }
+                
+                // Clear editing state
+                sessionStorage.removeItem('editingRowIndex');
+                
+                // Close modal
+                document.getElementById('addEmployeeModal').classList.remove('active');
+                
+                // Clear form fields
+                document.getElementById('employeeName').value = '';
+                document.getElementById('employeeID').value = '';
+                document.getElementById('employeeEmail').value = '';
+                document.getElementById('employeePhone').value = '';
+                for(let i = 1; i <= 8; i++) {
+                    const checkbox = document.getElementById('role' + i);
+                    if(checkbox) checkbox.checked = false;
+                }
+                document.getElementById('roleText').textContent = 'اختر الدور';
+            } else {
+                // It's a new employee, use the original handler
+                if (typeof existingAddBtnHandler === 'function') {
+                    existingAddBtnHandler.call(this);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

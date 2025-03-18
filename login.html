@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - برنامج عون</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4a8db7 0%, #5aaa75 100%);
+            overflow: hidden;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px 30px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            margin-bottom: 5px;
+        }
+        
+        .logo img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+        
+        .login-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5aaa75;
+            margin: 5px 0 2px;
+        }
+        
+        .login-subtitle {
+            font-size: 14px;
+            color: #5aaa75;
+            margin-bottom: 20px;
+        }
+        
+        .login-form {
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-title {
+            font-size: 18px;
+            color: #4a8db7;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: normal;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            height: 45px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 0 15px;
+            font-size: 16px;
+            background-color: white;
+            text-align: right;
+        }
+        
+        .form-control::placeholder {
+            color: #aaa;
+            text-align: right;
+        }
+        
+        .login-btn {
+            width: 100%;
+            height: 45px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #4a8db7 0%, #5aaa75 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .forgot-password {
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        
+        .forgot-password:hover {
+            color: #4a8db7;
+            text-decoration: underline;
+        }
+        
+        .register-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 0;
+        }
+        
+        .register-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            height: 40px;
+            background: linear-gradient(90deg, #4a8db7 0%, #5aaa75 100%);
+            color: white;
+            border-radius: 8px;
+            border: none;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .register-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .register-btn svg {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+        }
+
+        @media (min-height: 700px) {
+            .login-container {
+                max-height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="logo.png" alt="عون" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzAiIGZpbGw9IiM1YWFhNzUiLz48cGF0aCBkPSJNMzAsMzAgQTMwLDMwIDAgMSwwIDUwLDgwIEEzMCwzMCAwIDEsMCA3MCw1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNGE4ZGI3IiBzdHJva2Utd2lkdGg9IjEwIi8+PC9zdmc+'" />
+        </div>
+        <h1 class="login-title">أهلا بك في عـــــون</h1>
+        <p class="login-subtitle">موقع لإدارة التطوع</p>
+        
+        <div class="login-form">
+            <h2 class="form-title">تسجيل الدخول</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" placeholder="كلمة المرور" required>
+                </div>
+                
+                <button type="submit" class="login-btn">تسجـــيل الدخــول</button>
+                
+                <div class="forgot-password" id="forgotPasswordBtn">
+                    هل نسيت كلمة المرور؟
+                </div>
+            </form>
+        </div>
+        
+        <div class="register-options">
+            <a href="orgreg.html" class="register-btn" id="organizationRegisterBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                إنشاء حساب مؤسسة
+            </a>
+            
+            <a href="volreg.html" class="register-btn" id="volunteerRegisterBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                إنشاء حساب متطوع
+            </a>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Basic validation
+                if (!email || !password) {
+                    alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+                    return;
+                }
+                
+                // Redirect to home page after successful login
+                window.location.href = 'Home Page.html';
+            });
+            
+            // Forgot password
+            document.getElementById('forgotPasswordBtn').addEventListener('click', function() {
+                // Redirect to the password recovery page
+                window.location.href = 'otp.html';
+            });
+            
+            // Registration buttons
+            document.getElementById('organizationRegisterBtn').addEventListener('click', function() {
+                alert('سيتم توجيهك إلى صفحة تسجيل المؤسسات');
+                // In a real app: window.location.href = 'organization-register.html';
+            });
+            
+            document.getElementById('volunteerRegisterBtn').addEventListener('click', function() {
+                alert('سيتم توجيهك إلى صفحة تسجيل المتطوعين');
+                // In a real app: window.location.href = 'volunteer-register.html';
+            });
+        });
+    </script>
+</body>
+</html>

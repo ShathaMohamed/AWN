@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج عطاء - جدول البرنامج</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-point {
+            width: 16px;
+            height: 16px;
+            background-color: #4a5568;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .progress-point.start {
+            left: 0;
+            background-color: #68d391;
+        }
+        
+        .progress-point.middle {
+            left: 50%;
+        }
+        
+        .progress-point.end {
+            left: 100%;
+        }
+        
+        .progress-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            text-align: center;
+        }
+        
+        .exit-button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Calendar Section */
+        .calendar-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .month-name {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .arrow-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .add-event-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .add-event-btn svg {
+            margin-left: 5px;
+        }
+        
+        .calendar-grid {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .calendar-grid th {
+            padding: 10px;
+            text-align: center;
+            background-color: #f9fafb;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .calendar-grid td {
+            border: 1px solid #eee;
+            height: 120px;
+            vertical-align: top;
+            padding: 5px;
+            position: relative;
+        }
+        
+        .day-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .event {
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 2.4em;
+        }
+        
+        .event.important {
+            background-color: rgba(104, 178, 235, 0.2);
+            color: #2b6cb0;
+        }
+        
+        .event.program-start {
+            background-color: rgba(104, 211, 145, 0.2);
+            color: #2f855a;
+        }
+        
+        /* Event details popup */
+        .event-details-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .event-details-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+            text-align: right;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #4a8db7, #5aaa75);
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0 20px 0 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sidebar-logo::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 20px auto 0;
+        }
+        
+        .sidebar-menu {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 25px;
+            cursor: pointer;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .menu-text {
+            font-weight: 500;
+            font-size: 17px;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .tech-support {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            text-align: right;
+        }
+        
+        .support-email {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            height: 40px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 0 10px;
+        }
+        
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-inputs .form-control {
+            flex: 1;
+        }
+        
+        .textarea-control {
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            resize: none;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            text-align: left;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: #4A9DBF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Ellipse 5.png" alt="برنامج عطاء">
+                <div class="sidebar-logo-text">برنامج عطاء</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item" id="homeBtn">
+                    <span class="menu-text">الصفحة الرئيسية</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item active" id="scheduleBtn">
+                    <span class="menu-text">جدول البرنامج</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="volunteersBtn">
+                    <span class="menu-text">المتطوعين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="employeesBtn">
+                    <span class="menu-text">الموظفين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="attendanceBtn">
+                    <span class="menu-text">متابعة الحضور والغياب</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="qrCodeBtn">
+                    <span class="menu-text">عرض QR Code</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="newProgramBtn">
+                    <span class="menu-text">إنشاء برنامج جديد</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="tech-support">الدعم الفني</div>
+                <a href="mailto:Awminfo@gmail.com" class="support-email">
+                    Awminfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="header">
+                <div class="logo-header">
+                    برنامج عطاء
+                </div>
+                <div class="user-actions">
+                    <div class="icon-button" id="accountBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div style="position: relative; flex: 1;">
+                    <div class="progress-bar">
+                        <div class="progress-point start"></div>
+                        <div class="progress-point middle"></div>
+                        <div class="progress-point end"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <div class="progress-label">البداية</div>
+                        <div class="progress-label">النهاية</div>
+                    </div>
+                </div>
+                <div style="width: 30px;"></div>
+                <button class="exit-button">تسجيل الخروج</button>
+            </div>
+            
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <div class="month-nav">
+                        <button class="arrow-btn next-month">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <span class="month-name">أغسطس</span>
+                        <button class="arrow-btn prev-month">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <button class="add-event-btn" id="addEventBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        إضافة حدث
+                    </button>
+                </div>
+                
+                <table class="calendar-grid">
+                    <thead>
+                        <tr>
+                            <th>الأحد</th>
+                            <th>الإثنين</th>
+                            <th>الثلاثاء</th>
+                            <th>الأربعاء</th>
+                            <th>الخميس</th>
+                            <th>الجمعة</th>
+                            <th>السبت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Calendar body will be dynamically generated via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for adding event -->
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="close-modal">&times;</button>
+                <div class="modal-title">تاريخ الحدث</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="date-inputs">
+                        <div>
+                            <input type="text" class="form-control" id="eventDay" placeholder="يوم">
+                        </div>
+                        <div>
+                            <input type="text" class="form-control" id="eventMonth" placeholder="شهر">
+                        </div>
+                        <div>
+                            <input type="text" class="form-control" id="eventYear" placeholder="سنة">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">تفاصيل الحدث</label>
+                    <textarea class="textarea-control" id="eventDetails"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="submitEventBtn">إضافة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation to all available pages
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = 'Home Page.html';
+            });
+            
+            document.getElementById('scheduleBtn').addEventListener('click', function() {
+                // Already on this page
+            });
+            
+            document.getElementById('volunteersBtn').addEventListener('click', function() {
+                window.location.href = 'volunteers.html';
+            });
+            
+            document.getElementById('employeesBtn').addEventListener('click', function() {
+                window.location.href = 'Org2.html';
+            });
+            
+            document.getElementById('attendanceBtn').addEventListener('click', function() {
+                window.location.href = 'attendance.html';
+            });
+            
+            document.getElementById('qrCodeBtn').addEventListener('click', function() {
+                window.location.href = 'qr.html';
+            });
+        
+            
+            document.getElementById('newProgramBtn').addEventListener('click', function() {
+                window.location.href = 'NewProg.html';
+            });
+            
+            // Logout button
+           // Add this code to the script section of all your pages
+
+// Logout button functionality
+document.querySelector('.exit-button').addEventListener('click', function() {
+    if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        // In a real application, you would clear any authentication tokens or cookies here
+        
+        // Example: Clear session storage
+        sessionStorage.clear();
+        
+        // Example: Clear local storage (if used for auth)
+        // localStorage.clear();
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
+});
+            
+            // Account icon navigation
+            document.getElementById('accountBtn').addEventListener('click', function() {
+                window.location.href = 'account.html';
+            });
+            
+            // Calendar functionality
+            const monthNames = [
+                "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+                "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+            ];
+            
+            let currentMonth = 7; // August (0-based index)
+            let currentYear = 2023;
+            
+            // Sample events data for different months
+            const eventsData = {
+                // August events
+                '8-1': [{ text: 'بداية البرنامج', type: 'program-start' }],
+                '8-5': [{ text: 'حدث مهم', type: 'important' }],
+                '8-17': [{ text: 'حدث مهم يوم الثلاثاء عرض كامل\nالتفاصيل', type: 'important' }],
+                
+                // July events
+                '7-10': [{ text: 'اجتماع المتطوعين', type: 'important' }],
+                '7-15': [{ text: 'تدريب جديد', type: 'program-start' }],
+                
+                // September events
+                '9-3': [{ text: 'ورشة عمل', type: 'important' }],
+                '9-20': [{ text: 'نهاية البرنامج', type: 'program-start' }]
+            };
+            
+            // Function to get the number of days in a month
+            function getDaysInMonth(year, month) {
+                return new Date(year, month + 1, 0).getDate();
+            }
+            
+            // Function to get the first day of the month (0 = Sunday, 1 = Monday, etc.)
+            function getFirstDayOfMonth(year, month) {
+                return new Date(year, month, 1).getDay();
+            }
+            
+            // Update month display and calendar grid
+            function updateCalendar() {
+                // Update month name
+                document.querySelector('.month-name').textContent = monthNames[currentMonth];
+                
+                // Get number of days and first day of month
+                const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+                const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
+                
+                // Clear existing calendar
+                const calendarBody = document.querySelector('.calendar-grid tbody');
+                calendarBody.innerHTML = '';
+                
+                // Create calendar rows
+                let dayCount = 1;
+                let rowHtml = '<tr>';
+                
+                // Add empty cells for days before the first of the month
+                for (let i = 0; i < firstDay; i++) {
+                    rowHtml += '<td></td>';
+                }
+                
+                // Add days of the month
+                for (let i = firstDay; i < 7; i++) {
+                    rowHtml += createDayCell(dayCount, currentMonth, currentYear);
+                    dayCount++;
+                }
+                rowHtml += '</tr>';
+                
+                // Add remaining weeks
+                while (dayCount <= daysInMonth) {
+                    rowHtml += '<tr>';
+                    for (let i = 0; i < 7 && dayCount <= daysInMonth; i++) {
+                        rowHtml += createDayCell(dayCount, currentMonth, currentYear);
+                        dayCount++;
+                    }
+                    
+                    // Fill in remaining cells if needed
+                    while (dayCount > daysInMonth && dayCount <= daysInMonth + (7 - (dayCount - 1) % 7) % 7) {
+                        rowHtml += '<td></td>';
+                        dayCount++;
+                    }
+                    
+                    rowHtml += '</tr>';
+                }
+                
+                calendarBody.innerHTML = rowHtml;
+                
+                // Add event listeners to all events for showing details
+                setupEventListeners();
+            }
+            
+            // Helper function to create a day cell with events
+            function createDayCell(day, month, year) {
+                const eventKey = `${month + 1}-${day}`;
+                const dayEvents = eventsData[eventKey] || [];
+                
+                let cellHtml = `<td><div class="day-number">${day}</div>`;
+                
+                // Add events for this day
+                dayEvents.forEach(event => {
+                    cellHtml += `<div class="event ${event.type}">${event.text}</div>`;
+                });
+                
+                cellHtml += '</td>';
+                return cellHtml;
+            }
+            
+            // Setup event listeners for events (for showing details popup)
+            function setupEventListeners() {
+                document.querySelectorAll('.event').forEach(event => {
+                    const fullText = event.textContent;
+                    
+                    event.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        
+                        // Create overlay for full text
+                        const overlay = document.createElement('div');
+                        overlay.className = 'event-details-overlay';
+                        
+                        const content = document.createElement('div');
+                        content.className = 'event-details-content';
+                        
+                        const closeButton = document.createElement('button');
+                        closeButton.innerHTML = '&times;';
+                        closeButton.style.position = 'absolute';
+                        closeButton.style.left = '10px';
+                        closeButton.style.top = '10px';
+                        closeButton.style.border = 'none';
+                        closeButton.style.background = 'none';
+                        closeButton.style.fontSize = '24px';
+                        closeButton.style.cursor = 'pointer';
+                        
+                        const textElement = document.createElement('p');
+                        textElement.textContent = fullText;
+                        textElement.style.margin = '10px 0';
+                        
+                        content.appendChild(closeButton);
+                        content.appendChild(textElement);
+                        overlay.appendChild(content);
+                        document.body.appendChild(overlay);
+                        
+                        closeButton.addEventListener('click', function() {
+                            document.body.removeChild(overlay);
+                        });
+                        
+                        overlay.addEventListener('click', function(e) {
+                            if (e.target === overlay) {
+                                document.body.removeChild(overlay);
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // Month navigation
+            document.querySelector('.prev-month').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                updateCalendar();
+            });
+            
+            document.querySelector('.next-month').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                updateCalendar();
+            });
+            
+            // Add event functionality
+            const addEventBtn = document.getElementById('addEventBtn');
+            const addEventModal = document.getElementById('addEventModal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const submitEventBtn = document.getElementById('submitEventBtn');
+            
+            addEventBtn.addEventListener('click', function() {
+                addEventModal.classList.add('active');
+                // Pre-fill current month and year
+                document.getElementById('eventMonth').value = currentMonth + 1;
+                document.getElementById('eventYear').value = currentYear;
+            });
+            
+            closeModalBtn.addEventListener('click', function() {
+                addEventModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside the modal content
+            addEventModal.addEventListener('click', function(e) {
+                if (e.target === addEventModal) {
+                    addEventModal.classList.remove('active');
+                }
+            });
+            
+            // Add event when clicking the submit button
+            submitEventBtn.addEventListener('click', function() {
+                const day = parseInt(document.getElementById('eventDay').value);
+                const month = parseInt(document.getElementById('eventMonth').value);
+                const year = parseInt(document.getElementById('eventYear').value);
+                const details = document.getElementById('eventDetails').value;
+                
+                // Validate input
+                if (isNaN(day) || isNaN(month) || isNaN(year) || !details) {
+                    alert('الرجاء إدخال جميع المعلومات المطلوبة');
+                    return;
+                }
+                
+                // Create event key and add to events data
+                const eventKey = `${month}-${day}`;
+                if (!eventsData[eventKey]) {
+                    eventsData[eventKey] = [];
+                }
+                
+                eventsData[eventKey].push({
+                    text: details,
+                    type: 'important'
+                });
+                
+                // Update the calendar to reflect new event
+                updateCalendar();
+                
+                // Clear form and close modal
+                document.getElementById('eventDay').value = '';
+                document.getElementById('eventMonth').value = '';
+                document.getElementById('eventYear').value = '';
+                document.getElementById('eventDetails').value = '';
+                
+                addEventModal.classList.remove('active');
+            });
+            
+            // Initialize calendar on page load
+            updateCalendar();
+        });
+    </script>
+</body>
+</html>
