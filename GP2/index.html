@@ -4,31 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول - عون</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="CSS/mainStyle.css">
+    <link rel="stylesheet" href="CSS/login.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png"> <!-- أيقونة بصيغة PNG -->
 </head>
 <body>
     <div class="container">
         <div class="login-box">
             <img src="Images/Logo.png" alt="شعار عون" class="logo-login">
-            <h1>أهلاً بك في <span class="highlight">عـون</span></h1>
-            <h2 class="subtitle">موقع لإدارة التطوع</h2>
-
+            <h1>أهلاً بك في عـــون</h1>
+            <h3>موقع لإدارة التطوع</h3>
+            
             <div class="form-container">
                 <h3>تسجيل الدخول</h3>
-                <form>
+                <form action="index.html" method="get">
                     <input type="email" placeholder="البريد الإلكتروني" required>
                     <input type="password" placeholder="كلمة المرور" required>
                     <button type="submit">تسجيل الدخول</button>
                 </form>
-                <a href="#">هل نسيت كلمة المرور؟</a>
+                <a href="PsswdReset.html">هل نسيت كلمة المرور؟</a>
             </div>
-
+            
             <div class="register-options">
-                <button class="volunteer-btn">
-                    <img src="Images/انشاء حساب متطوع.png" alt="متطوع"> إنشاء حساب متطوع
-                </button>
-                <a href="register-organization.html">
-                    <button class="organization-btn">
+                <a href="register-vol.html">
+                    <button class="volunteer-btn">
+                        <img src="Images/Volnteer-icon.png" alt="متطوع"> إنشاء حساب متطوع
+                    </button>
+                </a>
+                <a href="register-org.html">
+                    <button class="organizatioan-btn">
                         <img src="Images/حساب مؤسسة.png" alt="مؤسسة"> إنشاء حساب مؤسسة
                     </button>
                 </a>
