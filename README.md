@@ -9,7 +9,7 @@ Hostname,endpoint: https://awn-database.cveecc6g0hzy.eu-north-1.rds.amazonaws.co
 Port: 3306 <br>
 Username: admin <br>
 Password: Data11base <br>
--send for Khawla your device IP Adress. <br>
+-send for Khawla your device IP Address. <br>
 
 .............................................................................................*********************************************************** <br>
 Use sql query language to get and see tables ** PLEASE DONOT MODIFY any thing until tell Khawla ** <br>
