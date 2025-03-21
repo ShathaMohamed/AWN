@@ -4,7 +4,7 @@
 ### Download MySQL Workbench:
  👉 Download MySQL Workbench: https://dev.mysql.com/downloads/workbench/ 
 <br>
-### Set up a connection:
+### Set up a connection: 
 Hostname,endpoint: https://awn-database.cveecc6g0hzy.eu-north-1.rds.amazonaws.com <br>
 Port: 3306 <br>
 Username: admin <br>
