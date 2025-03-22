@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عون - إنشاء حساب متطوع</title>
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    <link rel="stylesheet" href="CSS/mainStyle.css">
+    
+    <!-- إضافة jQuery لتشغيل الوظائف بشكل صحيح -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('Images/Background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            padding: 20px;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+
+        .logo {
+            width: 180px;
+            height: auto;
+        }
+
+        .top-left {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .login-btn {
+            background: white;
+            border: 3px solid #236C8F;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #236C8F;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 18px;
+        }
+
+        .login-btn:hover {
+            background: #236C8F;
+            color: white;
+        }
+
+        .top-text {
+            color: #236C8F;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .register-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            margin-top: 80px;
+            position: relative;
+        }
+        .register-box img {
+            margin-bottom: 0px;
+        }
+ 
+        .icon {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #236C8F;
+            font-size: 26px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .form-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+        }
+
+        .name-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .name-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ACACAC;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: right;
+            transition: border-color 0.3s;
+            height: 45px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #5FAD56;
+        }
+
+        input.error {
+            border-color: #e74c3c;
+        }
+
+        .phone-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            min-width: 0;
+            height: 45px;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            bottom: 1px;
+            width: 60px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px 0 0 7px;
+            border-left: 1px solid #dee2e6;
+            color: #495057;
+            font-weight: 500;
+            font-size: 14px;
+            z-index: 1;
+            height: 43px;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding-left: 70px;
+            text-align: left;
+            direction: ltr;
+            min-width: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(to right, #6FA16B, #5198B7);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-top: 15px;
+            height: 45px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 12px;
+            padding-left: 35px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            text-align: right;
+            font-size: 14px;
+            display: none;
+        }
+
+        .strength-meter {
+            height: 5px;
+            background: #e0e0e0;
+            margin-top: 5px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-meter div {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        .weak {
+            background: #e74c3c;
+        }
+
+        .medium {
+            background: #f39c12;
+        }
+
+        .strong {
+            background: #27ae60;
+        }
+
+        .password-criteria {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+        }
+
+        .password-criteria-list {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0 0 0;
+            width: 100%;
+            direction: rtl;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .check {
+            margin-left: 3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+        }
+
+        .check.pass {
+            background-color: #27ae60;
+        }
+
+        .check.fail {
+            background-color: #e0e0e0;
+            color: transparent;
+        }
+
+        .check.pass:before {
+            content: "✓";
+            display: inline-block;
+            color: white;
+            font-size: 8px;
+        }
+
+        /* تنسيق مربعات الاختيار للمهارات */
+        .skills-container {
+            width: 100%;
+            position: relative;
+        }
+        
+        .skills-dropdown {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ACACAC;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: right;
+            transition: border-color 0.3s;
+            height: 45px;
+            cursor: pointer;
+            background: white;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 12px;
+            padding-left: 35px;
+            position: relative;
+            color: #777;
+            display: flex;
+            align-items: center;
+        }
+        
+        .skills-dropdown.error {
+            border-color: #e74c3c;
+        }
+        
+        .skills-dropdown.active {
+            border-color: #5FAD56;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .skills-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #5FAD56;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 0;
+            overflow-y: auto;
+            z-index: 10;
+            opacity: 0;
+            transition: all 0.3s;
+            visibility: hidden;
+        }
+        
+        .skills-list.active {
+            max-height: 200px;
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .skill-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: right;
+        }
+        
+        .skill-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .skill-checkbox {
+            margin-left: 10px;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ACACAC;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .skill-checkbox.checked {
+            background: #5FAD56;
+            border-color: #5FAD56;
+        }
+        
+        .skill-checkbox.checked:after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+        }
+        
+        .selected-skills {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 5px;
+            gap: 5px;
+        }
+        
+        .selected-skill {
+            background: #f0f8ff;
+            border: 1px solid #cce5ff;
+            border-radius: 4px;
+            padding: 3px 8px;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #236C8F;
+        }
+        
+        .remove-skill {
+            margin-right: 5px;
+            color: #dc3545;
+            cursor: pointer;
+        }
+        
+        /* تعديل لعرض العنوان */
+        /* تعديل ستايل عنوان الخانات */
+        .field-label {
+            display: none;
+        }
+        
+        input::placeholder, select:invalid {
+            color: #777;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .register-box {
+                padding: 20px;
+                margin: 100px 15px 15px 15px;
+                width: 90%;
+                max-width: 450px;
+                margin-top: 150px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .form-field {
+                width: 100%;
+            }
+
+            .top-left {
+                flex-direction: column;
+                gap: 10px;
+                top: 20px;
+                right: 20px;
+            }
+
+            .top-right {
+                top: 15px;
+                left: 15px;
+            }
+
+            .logo {
+                width: 150px;
+            }
+            
+            .container {
+                padding: 0;
+                justify-content: flex-start;
+            }
+            
+            .password-criteria-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .criteria-item {
+                margin-bottom: 5px;
+                font-size: 11px;
+            }
+            
+            .phone-container {
+                height: 45px;
+            }
+            
+            .phone-prefix {
+                height: 43px;
+            }
+            
+            .login-btn {
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+            
+            .top-text {
+                font-size: 16px;
+            }
+            
+            h2 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .name-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .name-field {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-box {
+                padding: 15px;
+                margin-top: 80px;
+            }
+            
+            .password-criteria-list {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            
+            .criteria-item {
+                font-size: 10px;
+                margin-bottom: 4px;
+                width: 48%;
+            }
+            
+            input, select {
+                font-size: 13px;
+                height: 42px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .logo {
+                width: 120px;
+            }
+            
+            .top-left {
+                right: 15px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @font-face {
+            font-family: 'Tajawal';
+            src: url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-right">
+            <img src="Images/Logo-text.png" alt="شعار عون" class="logo">
+        </div>
+
+        <div class="top-left">
+            <span class="top-text">لديك حساب بالفعل؟</span>
+            <a href="index.html" class="login-btn">تسجيل الدخول</a>
+        </div>
+
+        <div class="register-box">
+            <img src="Images/Blue-voulnteer.png" alt="أيقونة متطوع" class="icon">
+            <h2>إنشاء حساب متطوع</h2>
+
+            <form id="volunteerForm" novalidate>
+                <div class="form-group">
+                    <div class="form-field">
+                        <div class="name-group">
+                            <div class="name-field">
+                                <input type="text" id="firstName" placeholder="الاسم الأول" required>
+                                <span class="error-message" id="firstNameError">يرجى إدخال الاسم الأول</span>
+                            </div>
+                            
+                            <div class="name-field">
+                                <input type="text" id="middleName" placeholder="الاسم الأوسط">
+                            </div>
+                            
+                            <div class="name-field">
+                                <input type="text" id="lastName" placeholder="الاسم الأخير" required>
+                                <span class="error-message" id="lastNameError">يرجى إدخال الاسم الأخير</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="text" 
+                               id="identityNumber" 
+                               placeholder="رقم الهوية" 
+                               required 
+                               maxlength="10">
+                        <span class="error-message" id="identityError">يجب إدخال 10 أرقام فقط</span>
+                    </div>
+                    
+                    <div class="form-field">
+                        <select id="gender" required>
+                            <option value="" disabled selected>الجنس</option>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                        <span class="error-message" id="genderError">يرجى اختيار الجنس</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <div class="skills-container">
+                            <div class="skills-dropdown" id="skills-dropdown">المهارات</div>
+                            <div class="skills-list" id="skills-list">
+                                <div class="skill-item" data-value="تنظيم فعاليات">
+                                    <div class="skill-checkbox" id="skill-1"></div>
+                                    تنظيم فعاليات
+                                </div>
+                                <div class="skill-item" data-value="تقديم دعم نفسي">
+                                    <div class="skill-checkbox" id="skill-2"></div>
+                                    تقديم دعم نفسي
+                                </div>
+                                <div class="skill-item" data-value="مهارات تعليمية">
+                                    <div class="skill-checkbox" id="skill-3"></div>
+                                    مهارات تعليمية
+                                </div>
+                                <div class="skill-item" data-value="مهارات طبية">
+                                    <div class="skill-checkbox" id="skill-4"></div>
+                                    مهارات طبية
+                                </div>
+                                <div class="skill-item" data-value="مهارات إدارية">
+                                    <div class="skill-checkbox" id="skill-5"></div>
+                                    مهارات إدارية
+                                </div>
+                                <div class="skill-item" data-value="تصميم جرافيك">
+                                    <div class="skill-checkbox" id="skill-6"></div>
+                                    تصميم جرافيك
+                                </div>
+                                <div class="skill-item" data-value="تصوير فوتوغرافي">
+                                    <div class="skill-checkbox" id="skill-7"></div>
+                                    تصوير فوتوغرافي
+                                </div>
+                                <div class="skill-item" data-value="تطوير برمجيات">
+                                    <div class="skill-checkbox" id="skill-8"></div>
+                                    تطوير برمجيات
+                                </div>
+                                <div class="skill-item" data-value="تسويق وترويج">
+                                    <div class="skill-checkbox" id="skill-9"></div>
+                                    تسويق وترويج
+                                </div>
+                                <div class="skill-item" data-value="كتابة محتوى">
+                                    <div class="skill-checkbox" id="skill-10"></div>
+                                    كتابة محتوى
+                                </div>
+                                <div class="skill-item" data-value="ترجمة">
+                                    <div class="skill-checkbox" id="skill-11"></div>
+                                    ترجمة
+                                </div>
+                                <div class="skill-item" data-value="مهارات رياضية">
+                                    <div class="skill-checkbox" id="skill-12"></div>
+                                    مهارات رياضية
+                                </div>
+                                <div class="skill-item" data-value="إسعافات أولية">
+                                    <div class="skill-checkbox" id="skill-13"></div>
+                                    إسعافات أولية
+                                </div>
+                                <div class="skill-item" data-value="رعاية مسنين">
+                                    <div class="skill-checkbox" id="skill-14"></div>
+                                    رعاية مسنين
+                                </div>
+                                <div class="skill-item" data-value="رعاية ذوي الاحتياجات الخاصة">
+                                    <div class="skill-checkbox" id="skill-15"></div>
+                                    رعاية ذوي الاحتياجات الخاصة
+                                </div>
+                                <div class="skill-item" data-value="تعليم لغات">
+                                    <div class="skill-checkbox" id="skill-16"></div>
+                                    تعليم لغات
+                                </div>
+                                <div class="skill-item" data-value="مهارات يدوية وحرفية">
+                                    <div class="skill-checkbox" id="skill-17"></div>
+                                    مهارات يدوية وحرفية
+                                </div>
+                                <div class="skill-item" data-value="أعمال صيانة">
+                                    <div class="skill-checkbox" id="skill-18"></div>
+                                    أعمال صيانة
+                                </div>
+                                <div class="skill-item" data-value="قيادة وإدارة فرق">
+                                    <div class="skill-checkbox" id="skill-19"></div>
+                                    قيادة وإدارة فرق
+                                </div>
+                                <div class="skill-item" data-value="توزيع مساعدات">
+                                    <div class="skill-checkbox" id="skill-20"></div>
+                                    توزيع مساعدات
+                                </div>
+                            </div>
+                            <input type="hidden" id="skills" name="skills">
+                            <div class="selected-skills" id="selected-skills"></div>
+                        </div>
+                        <span class="error-message" id="skillsError">يرجى اختيار مهارة واحدة على الأقل</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                        <span class="error-message" id="emailError">يرجى إدخال بريد إلكتروني صحيح</span>
+                    </div>
+                    
+                    <div class="form-field">
+                        <div class="phone-container">
+                            <input type="tel" 
+                                id="phone"
+                                class="phone-input" 
+                                placeholder="رقم الجوال" 
+                                required 
+                                maxlength="9">
+                            <span class="phone-prefix">966+</span>
+                        </div>
+                        <span class="error-message" id="phoneError">يجب أن يبدأ رقم الهاتف بـ 5 ويتكون من 9 أرقام</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="password" id="password" placeholder="كلمة المرور" required>
+                        <span class="error-message" id="passwordError">يجب أن تكون كلمة المرور 8 أحرف على الأقل</span>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div id="strengthMeter"></div>
+                            </div>
+                        </div>
+                        <div class="password-criteria">
+                            <div class="password-criteria-list">
+                                <div class="criteria-item"><span class="check fail" id="lengthCheck"></span> 8+ أحرف</div>
+                                <div class="criteria-item"><span class="check fail" id="upperCheck"></span> حرف كبير</div>
+                                <div class="criteria-item"><span class="check fail" id="numberCheck"></span> رقم</div>
+                                <div class="criteria-item"><span class="check fail" id="specialCheck"></span> رمز خاص</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" required>
+                        <span class="error-message" id="confirmPasswordError">كلمة المرور غير متطابقة</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">إنشاء الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // تهيئة وظائف المهارات وأحداث النموذج عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // إدارة قائمة المهارات المنسدلة
+            const skillsDropdown = document.getElementById('skills-dropdown');
+            const skillsList = document.getElementById('skills-list');
+            const selectedSkills = document.getElementById('selected-skills');
+            const skillsInput = document.getElementById('skills');
+            const skillsError = document.getElementById('skillsError');
+            
+            // قائمة المهارات المحددة
+            let selectedSkillsList = [];
+            
+            // فتح/إغلاق قائمة المهارات
+            skillsDropdown.addEventListener('click', function() {
+                skillsDropdown.classList.toggle('active');
+                skillsList.classList.toggle('active');
+            });
+            
+            // عند النقر خارج القائمة
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.skills-container') && skillsList.classList.contains('active')) {
+                    skillsDropdown.classList.remove('active');
+                    skillsList.classList.remove('active');
+                }
+            });
+            
+            // عند النقر على مهارة
+            document.querySelectorAll('.skill-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const skillValue = this.getAttribute('data-value');
+                    const checkbox = this.querySelector('.skill-checkbox');
+                    
+                    // تحديد/إلغاء تحديد المهارة
+                    if (checkbox.classList.contains('checked')) {
+                        // إلغاء تحديد
+                        checkbox.classList.remove('checked');
+                        
+                        // إزالة من قائمة المهارات المحددة
+                        const index = selectedSkillsList.indexOf(skillValue);
+                        if (index > -1) {
+                            selectedSkillsList.splice(index, 1);
+                        }
+                        
+                        // إزالة من المهارات المعروضة
+                        const skillToRemove = document.querySelector(`.selected-skill[data-value="${skillValue}"]`);
+                        if (skillToRemove) {
+                            skillToRemove.remove();
+                        }
+                    } else {
+                        // تحديد
+                        checkbox.classList.add('checked');
+                        
+                        // إضافة إلى قائمة المهارات المحددة
+                        if (!selectedSkillsList.includes(skillValue)) {
+                            selectedSkillsList.push(skillValue);
+                            
+                            // إضافة إلى المهارات المعروضة
+                            const skillElement = document.createElement('div');
+                            skillElement.className = 'selected-skill';
+                            skillElement.setAttribute('data-value', skillValue);
+                            skillElement.innerHTML = `
+                                ${skillValue}
+                                <span class="remove-skill" data-value="${skillValue}">×</span>
+                            `;
+                            selectedSkills.appendChild(skillElement);
+                            
+                            // إضافة حدث لزر الحذف
+                            skillElement.querySelector('.remove-skill').addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const skillToRemove = this.getAttribute('data-value');
+                                
+                                // إلغاء تحديد في القائمة
+                                document.querySelectorAll('.skill-item').forEach(item => {
+                                    if (item.getAttribute('data-value') === skillToRemove) {
+                                        item.querySelector('.skill-checkbox').classList.remove('checked');
+                                    }
+                                });
+                                
+                                // إزالة من قائمة المهارات المحددة
+                                const index = selectedSkillsList.indexOf(skillToRemove);
+                                if (index > -1) {
+                                    selectedSkillsList.splice(index, 1);
+                                }
+                                
+                                // إزالة من المهارات المعروضة
+                                skillElement.remove();
+                                
+                                // تحديث حقل المهارات
+                                skillsInput.value = selectedSkillsList.join(',');
+                                
+                                // التحقق من صحة المهارات
+                                validateSkills();
+                            });
+                        }
+                    }
+                    
+                    // تحديث حقل المهارات
+                    skillsInput.value = selectedSkillsList.join(',');
+                    
+                    // التحقق من صحة المهارات
+                    validateSkills();
+                });
+            });
+            
+            // إغلاق قائمة المهارات عند الضغط على Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && skillsList.classList.contains('active')) {
+                    skillsDropdown.classList.remove('active');
+                    skillsList.classList.remove('active');
+                }
+            });
+            
+            // التحقق من صحة البيانات
+            const form = document.getElementById('volunteerForm');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const strengthMeter = document.getElementById('strengthMeter');
+            const identityInput = document.getElementById('identityNumber');
+            
+            // عناصر معايير كلمة المرور
+            const lengthCheck = document.getElementById('lengthCheck');
+            const upperCheck = document.getElementById('upperCheck');
+            const numberCheck = document.getElementById('numberCheck');
+            const specialCheck = document.getElementById('specialCheck');
+
+            // إظهار مؤشر قوة كلمة المرور فور بدء الكتابة
+            passwordInput.addEventListener('focus', function() {
+                document.querySelector('.password-strength').style.display = 'block';
+                document.querySelector('.password-criteria').style.display = 'block';
+            });
+
+            // التحقق من صحة البريد الإلكتروني
+            emailInput.addEventListener('input', validateEmail);
+            
+            function validateEmail() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const emailError = document.getElementById('emailError');
+                
+                if (!emailRegex.test(emailInput.value) && emailInput.value !== '') {
+                    emailInput.classList.add('error');
+                    emailError.style.display = 'block';
+                    return false;
+                } else {
+                    emailInput.classList.remove('error');
+                    emailError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // التحقق من صحة رقم الهاتف
+            phoneInput.addEventListener('input', function(e) {
+                // السماح بكتابة الأرقام فقط
+                let value = this.value.replace(/\D/g, '');
+                
+                // التأكد من أن أول رقم هو 5 (إذا كان هناك قيمة)
+                if (value.length > 0 && value[0] !== '5') {
+                    value = '5' + value.substring(1);
+                }
+                
+                // اقتصار الطول على 9 أرقام
+                value = value.substring(0, 9);
+                
+                // تحديث قيمة الحقل
+                this.value = value;
+                
+                validatePhone();
+            });
+            
+            function validatePhone() {
+                const phoneRegex = /^5\d{8}$/;
+                const phoneError = document.getElementById('phoneError');
+                
+                if (!phoneRegex.test(phoneInput.value) && phoneInput.value !== '') {
+                    phoneInput.classList.add('error');
+                    phoneError.style.display = 'block';
+                    return false;
+                } else {
+                    phoneInput.classList.remove('error');
+                    phoneError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // التحقق من صحة رقم الهوية
+            identityInput.addEventListener('input', function() {
+                // السماح بكتابة الأرقام فقط
+                let value = this.value.replace(/\D/g, '');
+                
+                // اقتصار الطول على 10 أرقام
+                value = value.substring(0, 10);
+                
+                // تحديث قيمة الحقل
+                this.value = value;
+                
+                validateIdentity();
+            });
+            
+            function validateIdentity() {
+                const identityError = document.getElementById('identityError');
+                
+                if (identityInput.value.length !== 10 && identityInput.value !== '') {
+                    identityInput.classList.add('error');
+                    identityError.style.display = 'block';
+                    return false;
+                } else {
+                    identityInput.classList.remove('error');
+                    identityError.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            // التحقق من المهارات
+            function validateSkills() {
+                const skillsDropdown = document.getElementById('skills-dropdown');
+                const skillsInput = document.getElementById('skills');
+                const skillsError = document.getElementById('skillsError');
+                
+                if (!skillsInput.value || skillsInput.value === '') {
+                    skillsDropdown.classList.add('error');
+                    skillsError.style.display = 'block';
+                    return false;
+                } else {
+                    skillsDropdown.classList.remove('error');
+                    skillsError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // التحقق من قوة كلمة المرور
+            passwordInput.addEventListener('input', function() {
+                const password = passwordInput.value;
+                const passwordError = document.getElementById('passwordError');
+                
+                if (password.length < 8 && password !== '') {
+                    passwordInput.classList.add('error');
+                    passwordError.style.display = 'block';
+                } else {
+                    passwordInput.classList.remove('error');
+                    passwordError.style.display = 'none';
+                }
+                
+                checkPasswordStrength(password);
+                
+                // تحديث حالة معايير كلمة المرور
+                updatePasswordCriteria(password);
+            });
+
+            // تحديث معايير كلمة المرور
+            function updatePasswordCriteria(password) {
+                // التحقق من الطول
+                if (password.length >= 8) {
+                    lengthCheck.classList.remove('fail');
+                    lengthCheck.classList.add('pass');
+                } else {
+                    lengthCheck.classList.remove('pass');
+                    lengthCheck.classList.add('fail');
+                }
+                
+                // التحقق من الأحرف الكبيرة
+                if (password.match(/[A-Z]/)) {
+                    upperCheck.classList.remove('fail');
+                    upperCheck.classList.add('pass');
+                } else {
+                    upperCheck.classList.remove('pass');
+                    upperCheck.classList.add('fail');
+                }
+                
+                // التحقق من الأرقام
+                if (password.match(/[0-9]/)) {
+                    numberCheck.classList.remove('fail');
+                    numberCheck.classList.add('pass');
+                } else {
+                    numberCheck.classList.remove('pass');
+                    numberCheck.classList.add('fail');
+                }
+                
+                // التحقق من الرموز الخاصة
+                if (password.match(/[^A-Za-z0-9]/)) {
+                    specialCheck.classList.remove('fail');
+                    specialCheck.classList.add('pass');
+                } else {
+                    specialCheck.classList.remove('pass');
+                    specialCheck.classList.add('fail');
+                }
+            }
+
+            // التحقق من تطابق كلمة المرور
+            confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+            
+            function validatePasswordMatch() {
+                const confirmPasswordError = document.getElementById('confirmPasswordError');
+                
+                if (confirmPasswordInput.value !== passwordInput.value && confirmPasswordInput.value !== '') {
+                    confirmPasswordInput.classList.add('error');
+                    confirmPasswordError.style.display = 'block';
+                    return false;
+                } else {
+                    confirmPasswordInput.classList.remove('error');
+                    confirmPasswordError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // التحقق من قوة كلمة المرور
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                
+                if (password.length >= 8) {
+                    strength += 1;
+                }
+                
+                if (password.match(/[A-Z]/)) {
+                    strength += 1;
+                }
+                
+                if (password.match(/[0-9]/)) {
+                    strength += 1;
+                }
+                
+                if (password.match(/[^A-Za-z0-9]/)) {
+                    strength += 1;
+                }
+                
+                switch (strength) {
+                    case 0:
+                        strengthMeter.className = '';
+                        strengthMeter.style.width = '0%';
+                        break;
+                    case 1:
+                        strengthMeter.className = 'weak';
+                        strengthMeter.style.width = '25%';
+                        break;
+                    case 2:
+                        strengthMeter.className = 'weak';
+                        strengthMeter.style.width = '50%';
+                        break;
+                    case 3:
+                        strengthMeter.className = 'medium';
+                        strengthMeter.style.width = '75%';
+                        break;
+                    case 4:
+                        strengthMeter.className = 'strong';
+                        strengthMeter.style.width = '100%';
+                        break;
+                }
+            }
+
+            // التحقق من صحة النموذج عند التقديم
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // التحقق من كل حقل
+                const firstName = document.getElementById('firstName');
+                const lastName = document.getElementById('lastName');
+                const gender = document.getElementById('gender');
+                
+                let isValid = true;
+                
+                // التحقق من الاسم الأول
+                if (firstName.value === '') {
+                    document.getElementById('firstNameError').style.display = 'block';
+                    firstName.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('firstNameError').style.display = 'none';
+                    firstName.classList.remove('error');
+                }
+                
+                // التحقق من الاسم الأخير
+                if (lastName.value === '') {
+                    document.getElementById('lastNameError').style.display = 'block';
+                    lastName.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('lastNameError').style.display = 'none';
+                    lastName.classList.remove('error');
+                }
+                
+                // التحقق من الجنس
+                if (gender.value === '' || gender.value === null) {
+                    document.getElementById('genderError').style.display = 'block';
+                    gender.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('genderError').style.display = 'none';
+                    gender.classList.remove('error');
+                }
+                
+                // التحقق من رقم الهوية
+                if (identityInput.value === '' || identityInput.value.length !== 10) {
+                    document.getElementById('identityError').style.display = 'block';
+                    identityInput.classList.add('error');
+                    isValid = false;
+                } else {
+                    validateIdentity();
+                }
+                
+                // التحقق من المهارات
+                if (!validateSkills()) {
+                    isValid = false;
+                }
+                
+                // التحقق من البريد الإلكتروني
+                if (emailInput.value === '') {
+                    document.getElementById('emailError').style.display = 'block';
+                    emailInput.classList.add('error');
+                    isValid = false;
+                } else {
+                    validateEmail();
+                }
+                
+                // التحقق من رقم الهاتف
+                if (phoneInput.value === '' || !validatePhone()) {
+                    document.getElementById('phoneError').style.display = 'block';
+                    phoneInput.classList.add('error');
+                    isValid = false;
+                }
+                
+                // التحقق من كلمة المرور
+                if (passwordInput.value === '' || passwordInput.value.length < 8) {
+                    document.getElementById('passwordError').style.display = 'block';
+                    passwordInput.classList.add('error');
+                    isValid = false;
+                }
+                
+                // التحقق من تطابق كلمة المرور
+                if (confirmPasswordInput.value === '' || !validatePasswordMatch()) {
+                    confirmPasswordInput.classList.add('error');
+                    document.getElementById('confirmPasswordError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    alert('تم إنشاء الحساب بنجاح!');
+                    // هنا يمكن إرسال البيانات إلى الخادم
+                    // لأغراض العرض، نقوم بإعادة تعيين النموذج بعد التقديم الناجح
+                    form.reset();
+                    strengthMeter.className = '';
+                    strengthMeter.style.width = '0%';
+                    document.querySelector('.password-strength').style.display = 'none';
+                    document.querySelector('.password-criteria').style.display = 'none';
+                    
+                    // إعادة تعيين حالات التحقق
+                    lengthCheck.classList.remove('pass');
+                    lengthCheck.classList.add('fail');
+                    upperCheck.classList.remove('pass');
+                    upperCheck.classList.add('fail');
+                    numberCheck.classList.remove('pass');
+                    numberCheck.classList.add('fail');
+                    specialCheck.classList.remove('pass');
+                    specialCheck.classList.add('fail');
+                    
+                    // إعادة تعيين حقل المهارات
+                    selectedSkillsList = [];
+                    skillsInput.value = '';
+                    document.getElementById('selected-skills').innerHTML = '';
+                    document.querySelectorAll('.skill-checkbox.checked').forEach(checkbox => {
+                        checkbox.classList.remove('checked');
+                    });
+                    document.getElementById('skills-dropdown').classList.remove('error');
+                } else {
+                    // التمرير إلى أول خطأ
+                    const firstError = document.querySelector('.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+                }
+            });
+        });
+  
+        const form = document.getElementById('volunteerForm');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const identityInput = document.getElementById('identityNumber');
+        
+        // عناصر معايير كلمة المرور
+        const lengthCheck = document.getElementById('lengthCheck');
+        const upperCheck = document.getElementById('upperCheck');
+        const numberCheck = document.getElementById('numberCheck');
+        const specialCheck = document.getElementById('specialCheck');
+
+        // إظهار مؤشر قوة كلمة المرور فور بدء الكتابة
+        passwordInput.addEventListener('focus', function() {
+            document.querySelector('.password-strength').style.display = 'block';
+            document.querySelector('.password-criteria').style.display = 'block';
+        });
+
+        // التحقق من صحة البريد الإلكتروني
+        emailInput.addEventListener('input', validateEmail);
+        
+        function validateEmail() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailError = document.getElementById('emailError');
+            
+            if (!emailRegex.test(emailInput.value) && emailInput.value !== '') {
+                emailInput.classList.add('error');
+                emailError.style.display = 'block';
+                return false;
+            } else {
+                emailInput.classList.remove('error');
+                emailError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من صحة رقم الهاتف
+        phoneInput.addEventListener('input', function(e) {
+            // قبول فقط الأرقام والتأكد أن أول رقم هو 5
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length > 0 && value[0] !== '5') {
+                value = '';
+            }
+            
+            // اقتصار الطول على 9 أرقام
+            value = value.substring(0, 9);
+            
+            // تحديث قيمة الحقل
+            e.target.value = value;
+            
+            validatePhone();
+        });
+        
+        function validatePhone() {
+            const phoneRegex = /^5\d{8}$/;
+            const phoneError = document.getElementById('phoneError');
+            
+            if (!phoneRegex.test(phoneInput.value) && phoneInput.value !== '') {
+                phoneInput.classList.add('error');
+                phoneError.style.display = 'block';
+                return false;
+            } else {
+                phoneInput.classList.remove('error');
+                phoneError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من صحة رقم الهوية
+        identityInput.addEventListener('input', function(e) {
+            // إزالة أي حرف غير رقمي
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // اقتصار الطول على 10 أرقام
+            value = value.substring(0, 10);
+            
+            // تحديث قيمة الحقل
+            e.target.value = value;
+            
+            validateIdentity();
+        });
+        
+        function validateIdentity() {
+            const identityError = document.getElementById('identityError');
+            
+            if (identityInput.value.length !== 10 && identityInput.value !== '') {
+                identityInput.classList.add('error');
+                identityError.style.display = 'block';
+                return false;
+            } else {
+                identityInput.classList.remove('error');
+                identityError.style.display = 'none';
+                return true;
+            }
+        }
+        
+        // التحقق من المهارات
+        function validateSkills() {
+            const skillsDropdown = document.getElementById('skills-dropdown');
+            const skillsInput = document.getElementById('skills');
+            const skillsError = document.getElementById('skillsError');
+            
+            if (!skillsInput.value || skillsInput.value === '') {
+                skillsDropdown.classList.add('error');
+                skillsError.style.display = 'block';
+                return false;
+            } else {
+                skillsDropdown.classList.remove('error');
+                skillsError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من قوة كلمة المرور
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const passwordError = document.getElementById('passwordError');
+            
+            if (password.length < 8 && password !== '') {
+                passwordInput.classList.add('error');
+                passwordError.style.display = 'block';
+            } else {
+                passwordInput.classList.remove('error');
+                passwordError.style.display = 'none';
+            }
+            
+            checkPasswordStrength(password);
+            
+            // تحديث حالة معايير كلمة المرور
+            updatePasswordCriteria(password);
+        });
+
+        // تحديث معايير كلمة المرور
+        function updatePasswordCriteria(password) {
+            // التحقق من الطول
+            if (password.length >= 8) {
+                lengthCheck.classList.remove('fail');
+                lengthCheck.classList.add('pass');
+            } else {
+                lengthCheck.classList.remove('pass');
+                lengthCheck.classList.add('fail');
+            }
+            
+            // التحقق من الأحرف الكبيرة
+            if (password.match(/[A-Z]/)) {
+                upperCheck.classList.remove('fail');
+                upperCheck.classList.add('pass');
+            } else {
+                upperCheck.classList.remove('pass');
+                upperCheck.classList.add('fail');
+            }
+            
+            // التحقق من الأرقام
+            if (password.match(/[0-9]/)) {
+                numberCheck.classList.remove('fail');
+                numberCheck.classList.add('pass');
+            } else {
+                numberCheck.classList.remove('pass');
+                numberCheck.classList.add('fail');
+            }
+            
+            // التحقق من الرموز الخاصة
+            if (password.match(/[^A-Za-z0-9]/)) {
+                specialCheck.classList.remove('fail');
+                specialCheck.classList.add('pass');
+            } else {
+                specialCheck.classList.remove('pass');
+                specialCheck.classList.add('fail');
+            }
+        }
+
+        // التحقق من تطابق كلمة المرور
+        confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+        
+        function validatePasswordMatch() {
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            
+            if (confirmPasswordInput.value !== passwordInput.value && confirmPasswordInput.value !== '') {
+                confirmPasswordInput.classList.add('error');
+                confirmPasswordError.style.display = 'block';
+                return false;
+            } else {
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من قوة كلمة المرور
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            
+            if (password.length >= 8) {
+                strength += 1;
+            }
+            
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+            
+            if (password.match(/[0-9]/)) {
+                strength += 1;
+            }
+            
+            if (password.match(/[^A-Za-z0-9]/)) {
+                strength += 1;
+            }
+            
+            switch (strength) {
+                case 0:
+                    strengthMeter.className = '';
+                    strengthMeter.style.width = '0%';
+                    break;
+                case 1:
+                    strengthMeter.className = 'weak';
+                    strengthMeter.style.width = '25%';
+                    break;
+                case 2:
+                    strengthMeter.className = 'weak';
+                    strengthMeter.style.width = '50%';
+                    break;
+                case 3:
+                    strengthMeter.className = 'medium';
+                    strengthMeter.style.width = '75%';
+                    break;
+                case 4:
+                    strengthMeter.className = 'strong';
+                    strengthMeter.style.width = '100%';
+                    break;
+            }
+        }
+
+        // التحقق من صحة النموذج عند التقديم
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // التحقق من كل حقل
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const gender = document.getElementById('gender');
+            
+            let isValid = true;
+            
+            // التحقق من الاسم الأول
+            if (firstName.value === '') {
+                document.getElementById('firstNameError').style.display = 'block';
+                firstName.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('firstNameError').style.display = 'none';
+                firstName.classList.remove('error');
+            }
+            
+            // التحقق من الاسم الأخير
+            if (lastName.value === '') {
+                document.getElementById('lastNameError').style.display = 'block';
+                lastName.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('lastNameError').style.display = 'none';
+                lastName.classList.remove('error');
+            }
+            
+            // التحقق من الجنس
+            if (gender.value === '' || gender.value === null) {
+                document.getElementById('genderError').style.display = 'block';
+                gender.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('genderError').style.display = 'none';
+                gender.classList.remove('error');
+            }
+            
+            // التحقق من رقم الهوية
+            if (!validateIdentity()) {
+                isValid = false;
+            }
+            
+            // التحقق من المهارات
+            if (!validateSkills()) {
+                isValid = false;
+            }
+            
+            // التحقق من البريد الإلكتروني
+            if (!validateEmail()) {
+                isValid = false;
+            }
+            
+            // التحقق من رقم الهاتف
+            if (!validatePhone()) {
+                isValid = false;
+            }
+            
+            // التحقق من كلمة المرور
+            if (passwordInput.value.length < 8) {
+                document.getElementById('passwordError').style.display = 'block';
+                passwordInput.classList.add('error');
+                isValid = false;
+            }
+            
+            // التحقق من تطابق كلمة المرور
+            if (!validatePasswordMatch()) {
+                isValid = false;
+            }
+            
+            if (isValid) {
+                alert('تم إنشاء الحساب بنجاح!');
+                // هنا يمكن إرسال البيانات إلى الخادم
+                // لأغراض العرض، نقوم بإعادة تعيين النموذج بعد التقديم الناجح
+                form.reset();
+                strengthMeter.className = '';
+                strengthMeter.style.width = '0%';
+                document.querySelector('.password-strength').style.display = 'none';
+                document.querySelector('.password-criteria').style.display = 'none';
+                
+                // إعادة تعيين حالات التحقق
+                lengthCheck.classList.remove('pass');
+                lengthCheck.classList.add('fail');
+                upperCheck.classList.remove('pass');
+                upperCheck.classList.add('fail');
+                numberCheck.classList.remove('pass');
+                numberCheck.classList.add('fail');
+                specialCheck.classList.remove('pass');
+                specialCheck.classList.add('fail');
+                
+                // إعادة تعيين حقل المهارات
+                selectedSkillsList = [];
+                skillsInput.value = '';
+                document.getElementById('selected-skills').innerHTML = '';
+                document.querySelectorAll('.skill-checkbox.checked').forEach(checkbox => {
+                    checkbox.classList.remove('checked');
+                });
+                document.getElementById('skills-dropdown').classList.remove('error');
+            } else {
+                // التمرير إلى أول خطأ
+                const firstError = document.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

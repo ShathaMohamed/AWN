@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عون - إنشاء حساب مؤسسة</title>
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    <link rel="stylesheet" href="CSS/mainStyle.css">
+    <!-- إضافة مكتبة Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('Images/Background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            padding: 20px;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+
+        .logo {
+            width: 180px;
+            height: auto;
+        }
+
+        .top-left {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .login-btn {
+            background: white;
+            border: 3px solid #236C8F;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #236C8F;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 18px;
+        }
+
+        .login-btn:hover {
+            background: #236C8F;
+            color: white;
+        }
+
+        .top-text {
+            color: #236C8F;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .register-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #236C8F;
+            font-size: 26px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .form-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ACACAC;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: right;
+            transition: border-color 0.3s;
+            height: 45px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #5FAD56;
+        }
+
+        input.error {
+            border-color: #e74c3c;
+        }
+
+        .phone-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            min-width: 0;
+            height: 45px;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            bottom: 1px;
+            width: 60px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px 0 0 7px;
+            border-left: 1px solid #dee2e6;
+            color: #495057;
+            font-weight: 500;
+            font-size: 14px;
+            z-index: 1;
+            height: 43px;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding-left: 70px;
+            text-align: left;
+            direction: ltr;
+            min-width: 0;
+        }
+
+        .location-group {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+        
+        .location-group input {
+            flex: 1;
+        }
+
+        .location-btn {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .location-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #5FAD56;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(to right, #6FA16B, #5198B7);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-top: 15px;
+            height: 45px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 12px;
+            padding-left: 35px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            text-align: right;
+            font-size: 14px;
+            display: none;
+        }
+
+        .password-criteria {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+        }
+
+        .password-criteria-list {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0 0 0;
+            width: 100%;
+            direction: rtl;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .check {
+            margin-left: 3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+        }
+
+        .check.pass {
+            background-color: #27ae60;
+        }
+
+        .check.fail {
+            background-color: #e0e0e0;
+            color: transparent;
+        }
+
+        .check.pass:before {
+            content: "✓";
+            display: inline-block;
+            color: white;
+            font-size: 8px;
+        }
+
+        .check.pass {
+            background-color: #27ae60;
+        }
+
+        .check.fail {
+            background-color: #e0e0e0;
+        }
+
+        .strength-meter {
+            height: 5px;
+            background: #e0e0e0;
+            margin-top: 5px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-meter div {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        .weak {
+            background: #e74c3c;
+        }
+
+        .medium {
+            background: #f39c12;
+        }
+
+        .strong {
+            background: #27ae60;
+        }
+
+        .map-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .map-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-map {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            z-index: 10;
+        }
+
+        #map {
+            height: 450px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .map-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #236C8F;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* Leaflet custom styles */
+        .leaflet-control-locate {
+            font-family: 'Tajawal', sans-serif !important;
+        }
+        
+        .leaflet-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        
+        .leaflet-touch .leaflet-control-layers, 
+        .leaflet-touch .leaflet-bar {
+            border: none;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .password-group {
+            flex: 1;
+            position: relative;
+        }
+        
+        /* زر تحديد الموقع الحالي */
+        .current-location-btn {
+            background: #236C8F;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .current-location-btn:hover {
+            background: #164E6A;
+        }
+        
+        .current-location-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        @media (max-width: 768px) {
+            .register-box {
+                padding: 20px;
+                margin: 100px 15px 15px 15px;
+                width: 90%;
+                max-width: 450px;
+                margin-top: 150px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .form-field {
+                width: 100%;
+            }
+
+            .top-left {
+                flex-direction: column;
+                gap: 10px;
+                top: 20px;
+                right: 20px;
+            }
+
+            .top-right {
+                top: 15px;
+                left: 15px;
+            }
+
+            .logo {
+                width: 150px;
+            }
+            
+            .container {
+                padding: 0;
+                justify-content: flex-start;
+            }
+            
+            .map-content {
+                height: 80vh;
+                overflow-y: auto;
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .password-criteria-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .criteria-item {
+                margin-bottom: 5px;
+                font-size: 11px;
+            }
+            
+            .phone-container {
+                height: 45px;
+            }
+            
+            .phone-prefix {
+                height: 43px;
+            }
+            
+            #map {
+                height: 350px;
+            }
+            
+            .map-title {
+                font-size: 16px;
+            }
+            
+            .login-btn {
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+            
+            .top-text {
+                font-size: 16px;
+            }
+            
+            h2 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .register-box {
+                padding: 15px;
+                margin-top: 80px;
+            }
+            
+            .password-criteria-list {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            
+            .criteria-item {
+                font-size: 10px;
+                margin-bottom: 4px;
+                width: 48%;
+            }
+            
+            input, select {
+                font-size: 13px;
+                height: 42px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .logo {
+                width: 120px;
+            }
+            
+            .top-left {
+                right: 15px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @font-face {
+            font-family: 'Tajawal';
+            src: url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-right">
+            <img src="Images/Logo-text.png" alt="شعار عون" class="logo">
+        </div>
+
+        <div class="top-left">
+            <span class="top-text">لديك حساب بالفعل؟</span>
+            <a href="index.html" class="login-btn">تسجيل الدخول</a>
+        </div>
+
+        <div class="register-box">
+            <img src="Images/Blue-orgnization.png" alt="أيقونة مؤسسة" class="icon">
+            <h2>إنشاء حساب مؤسسة</h2>
+
+            <form id="organizationForm" novalidate>
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="text" id="orgName" placeholder="اسم المؤسسة" required>
+                        <span class="error-message" id="orgNameError">يرجى إدخال اسم المؤسسة</span>
+                    </div>
+                    <div class="form-field">
+                        <select id="city" required>
+                            <option value="" disabled selected>المدينة</option>
+                            <option value="الرياض">الرياض</option>
+                            <option value="جدة">جدة</option>
+                            <option value="مكة">مكة</option>
+                            <option value="المدينة المنورة">المدينة المنورة</option>
+                            <option value="الدمام">الدمام</option>
+                            <option value="الخبر">الخبر</option>
+                            <option value="أبها">أبها</option>
+                            <option value="تبوك">تبوك</option>
+                            <option value="القصيم">القصيم</option>
+                            <option value="حائل">حائل</option>
+                        </select>
+                        <span class="error-message" id="cityError">يرجى اختيار المدينة</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <div class="location-group">
+                            <input type="text" id="location" placeholder="مقر المؤسسة" required readonly>
+                            <input type="hidden" id="locationLat">
+                            <input type="hidden" id="locationLng">
+                            <button type="button" class="location-btn" onclick="openMap()">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="error-message" id="locationError">يرجى تحديد مقر المؤسسة</span>
+                    </div>
+                    
+                    <div class="form-field">
+                        <input type="url" id="website" placeholder="الموقع الإلكتروني">
+                        <span class="error-message" id="websiteError">يرجى إدخال رابط صحيح</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                        <span class="error-message" id="emailError">يرجى إدخال بريد إلكتروني صحيح</span>
+                    </div>
+                    
+                    <div class="form-field">
+                        <div class="phone-container">
+                            <input type="tel" 
+                                id="phone"
+                                class="phone-input" 
+                                placeholder="5XXXXXXXX" 
+                                required 
+                                maxlength="9">
+                            <span class="phone-prefix">966+</span>
+                        </div>
+                        <span class="error-message" id="phoneError">يجب أن يبدأ رقم الهاتف بـ 5 ويتكون من 9 أرقام</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-field">
+                        <input type="password" id="password" placeholder="كلمة المرور" required>
+                        <span class="error-message" id="passwordError">يجب أن تكون كلمة المرور 8 أحرف على الأقل</span>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div id="strengthMeter"></div>
+                            </div>
+                        </div>
+                        <div class="password-criteria">
+                            <div class="password-criteria-list">
+                                <div class="criteria-item"><span class="check fail" id="lengthCheck"></span> 8+ أحرف</div>
+                                <div class="criteria-item"><span class="check fail" id="upperCheck"></span> حرف كبير</div>
+                                <div class="criteria-item"><span class="check fail" id="numberCheck"></span> رقم</div>
+                                <div class="criteria-item"><span class="check fail" id="specialCheck"></span> رمز خاص</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" required>
+                        <span class="error-message" id="confirmPasswordError">كلمة المرور غير متطابقة</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">إنشاء الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة الخريطة -->
+    <div class="map-container">
+        <div class="map-content">
+            <button class="close-map" onclick="closeMap()">&times;</button>
+            <h3 class="map-title">حدد مقر المؤسسة على الخريطة</h3>
+            
+            <!-- زر تحديد الموقع الحالي -->
+            <button type="button" class="current-location-btn" onclick="getCurrentLocation()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                </svg>
+                استخدام موقعي الحالي
+            </button>
+            
+            <div id="map"></div>
+            <button class="submit-btn" onclick="confirmLocation()">تأكيد الموقع</button>
+        </div>
+    </div>
+
+    <script>
+        let map;
+        let marker;
+        let selectedPosition = { lat: 24.7136, lng: 46.6753 }; // إحداثيات الرياض الافتراضية
+
+        // فتح وتهيئة الخريطة
+        function openMap() {
+            document.querySelector('.map-container').style.display = 'flex';
+            
+            // تهيئة الخريطة إذا لم تكن موجودة بالفعل
+            if (!map) {
+                initLeafletMap();
+            } else {
+                // إذا كانت الخريطة موجودة بالفعل، تحديث الحجم
+                map.invalidateSize();
+            }
+        }
+
+        function initLeafletMap() {
+            // تهيئة خريطة Leaflet مع OpenStreetMap
+            map = L.map('map').setView([24.7136, 46.6753], 13);
+            
+            // إضافة خريطة OpenStreetMap كطبقة أساسية
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // إضافة علامة في الموقع الافتراضي
+            marker = L.marker([24.7136, 46.6753], {
+                draggable: true
+            }).addTo(map);
+            
+            // عند سحب العلامة
+            marker.on('dragend', function() {
+                const latlng = marker.getLatLng();
+                selectedPosition = {
+                    lat: latlng.lat,
+                    lng: latlng.lng
+                };
+            });
+            
+            // عند النقر على الخريطة
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                selectedPosition = {
+                    lat: e.latlng.lat,
+                    lng: e.latlng.lng
+                };
+            });
+            
+            // تحديث حجم الخريطة (مهم عند فتح النافذة المنبثقة)
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 100);
+        }
+
+        // الحصول على الموقع الحالي
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latlng = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        // تهيئة الخريطة إذا لم تكن موجودة
+                        if (!map) {
+                            initLeafletMap();
+                        }
+                        
+                        // تحريك العلامة والخريطة إلى الموقع الحالي
+                        marker.setLatLng([latlng.lat, latlng.lng]);
+                        map.setView([latlng.lat, latlng.lng], 15);
+                        
+                        // تحديث الموقع المحدد
+                        selectedPosition = latlng;
+                    },
+                    function(error) {
+                        alert("تعذر الوصول إلى موقعك الحالي. يرجى السماح بالوصول إلى الموقع أو تحديد الموقع يدويًا.");
+                    }
+                );
+            } else {
+                alert("متصفحك لا يدعم تحديد الموقع الحالي.");
+            }
+        }
+
+        function closeMap() {
+            document.querySelector('.map-container').style.display = 'none';
+        }
+
+        function confirmLocation() {
+            // تعيين القيمة في حقل المؤسسة
+            const locationInput = document.getElementById('location');
+            const latInput = document.getElementById('locationLat');
+            const lngInput = document.getElementById('locationLng');
+            
+            // محاولة الحصول على عنوان الموقع باستخدام API مجاني لـ Nominatim
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedPosition.lat}&lon=${selectedPosition.lng}&zoom=18&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        locationInput.value = data.display_name;
+                    } else {
+                        locationInput.value = `${selectedPosition.lat.toFixed(6)}, ${selectedPosition.lng.toFixed(6)}`;
+                    }
+                    
+                    // تخزين الإحداثيات
+                    latInput.value = selectedPosition.lat;
+                    lngInput.value = selectedPosition.lng;
+                    
+                    // التحقق من صحة الحقل
+                    locationInput.classList.remove('error');
+                    document.getElementById('locationError').style.display = 'none';
+                    
+                    // إغلاق النافذة
+                    closeMap();
+                })
+                .catch(error => {
+                    // في حالة فشل الحصول على العنوان، استخدام الإحداثيات فقط
+                    locationInput.value = `${selectedPosition.lat.toFixed(6)}, ${selectedPosition.lng.toFixed(6)}`;
+                    latInput.value = selectedPosition.lat;
+                    lngInput.value = selectedPosition.lng;
+                    locationInput.classList.remove('error');
+                    document.getElementById('locationError').style.display = 'none';
+                    closeMap();
+                });
+        }
+
+        // التحقق من صحة البيانات
+        const form = document.getElementById('organizationForm');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthMeter = document.getElementById('strengthMeter');
+        
+        // عناصر معايير كلمة المرور
+        const lengthCheck = document.getElementById('lengthCheck');
+        const upperCheck = document.getElementById('upperCheck');
+        const numberCheck = document.getElementById('numberCheck');
+        const specialCheck = document.getElementById('specialCheck');
+
+        // إظهار مؤشر قوة كلمة المرور فور بدء الكتابة
+        passwordInput.addEventListener('focus', function() {
+            document.querySelector('.password-strength').style.display = 'block';
+            document.querySelector('.password-criteria').style.display = 'block';
+        });
+
+        // التحقق من صحة البريد الإلكتروني
+        emailInput.addEventListener('input', validateEmail);
+        
+        function validateEmail() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailError = document.getElementById('emailError');
+            
+            if (!emailRegex.test(emailInput.value) && emailInput.value !== '') {
+                emailInput.classList.add('error');
+                emailError.style.display = 'block';
+                return false;
+            } else {
+                emailInput.classList.remove('error');
+                emailError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من صحة رقم الهاتف
+        phoneInput.addEventListener('input', validatePhone);
+        
+        function validatePhone() {
+            const phoneRegex = /^5\d{8}$/;
+            const phoneError = document.getElementById('phoneError');
+            
+            if (!phoneRegex.test(phoneInput.value) && phoneInput.value !== '') {
+                phoneInput.classList.add('error');
+                phoneError.style.display = 'block';
+                return false;
+            } else {
+                phoneInput.classList.remove('error');
+                phoneError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من قوة كلمة المرور
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const passwordError = document.getElementById('passwordError');
+            
+            if (password.length < 8 && password !== '') {
+                passwordInput.classList.add('error');
+                passwordError.style.display = 'block';
+            } else {
+                passwordInput.classList.remove('error');
+                passwordError.style.display = 'none';
+            }
+            
+            checkPasswordStrength(password);
+            
+            // تحديث حالة معايير كلمة المرور
+            updatePasswordCriteria(password);
+        });
+
+        // تحديث معايير كلمة المرور
+        function updatePasswordCriteria(password) {
+            // التحقق من الطول
+            if (password.length >= 8) {
+                lengthCheck.classList.remove('fail');
+                lengthCheck.classList.add('pass');
+            } else {
+                lengthCheck.classList.remove('pass');
+                lengthCheck.classList.add('fail');
+            }
+            
+            // التحقق من الأحرف الكبيرة
+            if (password.match(/[A-Z]/)) {
+                upperCheck.classList.remove('fail');
+                upperCheck.classList.add('pass');
+            } else {
+                upperCheck.classList.remove('pass');
+                upperCheck.classList.add('fail');
+            }
+            
+            // التحقق من الأرقام
+            if (password.match(/[0-9]/)) {
+                numberCheck.classList.remove('fail');
+                numberCheck.classList.add('pass');
+            } else {
+                numberCheck.classList.remove('pass');
+                numberCheck.classList.add('fail');
+            }
+            
+            // التحقق من الرموز الخاصة
+            if (password.match(/[^A-Za-z0-9]/)) {
+                specialCheck.classList.remove('fail');
+                specialCheck.classList.add('pass');
+            } else {
+                specialCheck.classList.remove('pass');
+                specialCheck.classList.add('fail');
+            }
+        }
+
+        // التحقق من تطابق كلمة المرور
+        confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+        
+        function validatePasswordMatch() {
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            
+            if (confirmPasswordInput.value !== passwordInput.value && confirmPasswordInput.value !== '') {
+                confirmPasswordInput.classList.add('error');
+                confirmPasswordError.style.display = 'block';
+                return false;
+            } else {
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordError.style.display = 'none';
+                return true;
+            }
+        }
+
+        // التحقق من قوة كلمة المرور
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            
+            if (password.length >= 8) {
+                strength += 1;
+            }
+            
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+            
+            if (password.match(/[0-9]/)) {
+                strength += 1;
+            }
+            
+            if (password.match(/[^A-Za-z0-9]/)) {
+                strength += 1;
+            }
+            
+            switch (strength) {
+                case 0:
+                    strengthMeter.className = '';
+                    strengthMeter.style.width = '0%';
+                    break;
+                case 1:
+                    strengthMeter.className = 'weak';
+                    strengthMeter.style.width = '25%';
+                    break;
+                case 2:
+                    strengthMeter.className = 'weak';
+                    strengthMeter.style.width = '50%';
+                    break;
+                case 3:
+                    strengthMeter.className = 'medium';
+                    strengthMeter.style.width = '75%';
+                    break;
+                case 4:
+                    strengthMeter.className = 'strong';
+                    strengthMeter.style.width = '100%';
+                    break;
+            }
+        }
+
+        // التحقق من صحة النموذج عند التقديم
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // التحقق من كل حقل
+            const orgName = document.getElementById('orgName');
+            const city = document.getElementById('city');
+            const location = document.getElementById('location');
+            const website = document.getElementById('website');
+            
+            let isValid = true;
+            
+            // التحقق من اسم المؤسسة
+            if (orgName.value === '') {
+                document.getElementById('orgNameError').style.display = 'block';
+                orgName.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('orgNameError').style.display = 'none';
+                orgName.classList.remove('error');
+            }
+            
+            // التحقق من المدينة
+            if (city.value === '' || city.value === null) {
+                document.getElementById('cityError').style.display = 'block';
+                city.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('cityError').style.display = 'none';
+                city.classList.remove('error');
+            }
+            
+            // التحقق من مقر المؤسسة
+            if (location.value === '') {
+                document.getElementById('locationError').style.display = 'block';
+                location.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('locationError').style.display = 'none';
+                location.classList.remove('error');
+            }
+            
+            // التحقق من صحة رابط الموقع
+            if (website.value !== '') {
+                try {
+                    new URL(website.value);
+                    document.getElementById('websiteError').style.display = 'none';
+                    website.classList.remove('error');
+                } catch (e) {
+                    document.getElementById('websiteError').style.display = 'block';
+                    website.classList.add('error');
+                    isValid = false;
+                }
+            }
+            
+            // التحقق من البريد الإلكتروني
+            if (!validateEmail()) {
+                isValid = false;
+            }
+            
+            // التحقق من رقم الهاتف
+            if (!validatePhone()) {
+                isValid = false;
+            }
+            
+            // التحقق من كلمة المرور
+            if (passwordInput.value.length < 8) {
+                document.getElementById('passwordError').style.display = 'block';
+                passwordInput.classList.add('error');
+                isValid = false;
+            }
+            
+            // التحقق من تطابق كلمة المرور
+            if (!validatePasswordMatch()) {
+                isValid = false;
+            }
+            
+            if (isValid) {
+                alert('تم إنشاء الحساب بنجاح!');
+                // هنا يمكن إرسال البيانات إلى الخادم
+                // لأغراض العرض، نقوم بإعادة تعيين النموذج بعد التقديم الناجح
+                form.reset();
+                strengthMeter.className = '';
+                strengthMeter.style.width = '0%';
+                document.querySelector('.password-strength').style.display = 'none';
+                document.querySelector('.password-criteria').style.display = 'none';
+                
+                // إعادة تعيين حالات التحقق
+                lengthCheck.classList.remove('pass');
+                lengthCheck.classList.add('fail');
+                upperCheck.classList.remove('pass');
+                upperCheck.classList.add('fail');
+                numberCheck.classList.remove('pass');
+                numberCheck.classList.add('fail');
+                specialCheck.classList.remove('pass');
+                specialCheck.classList.add('fail');
+            } else {
+                // التمرير إلى أول خطأ
+                const firstError = document.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
