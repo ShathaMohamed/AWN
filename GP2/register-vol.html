@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/mainStyle.css">
+    <link rel="stylesheet" href="CSS/register-vol.css">
+    <script src="java-script/register-vol.js" defer></script>
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    <title>عون - إنشاء حساب متطوع</title>
+   
+</head>
+<body>
+    <div class="container">
+        <div class="top-right">
+            <img src="Images/Logo-text.png" alt="شعار عون" class="logo">
+        </div>
+
+        <div class="top-left">
+            <span><b>لديك حساب بالفعل ؟</b></span>
+            <a href="#index.html" class="login-btn">تسجيل الدخول</a>
+        </div>
+
+        <div class="register-box">
+            <img src="Images/Blue-voulnteer.png" alt="أيقونة متطوع" class="icon">
+            <h2>إنشاء حساب متطوع</h2>
+
+            <form id="volunteerForm" novalidate>
+                <div class="form-group name-group">
+                    <input type="text" placeholder="الاسم الأول" required>
+                    <input type="text" placeholder="الاسم الأوسط">
+                    <input type="text" placeholder="الاسم الأخير" required>
+                </div>
+
+                <div class="form-group identity-group">
+                    <input type="text" 
+                           placeholder="رقم الهوية" 
+                           required 
+                           pattern="[0-9]{10}" 
+                           title="يجب إدخال 10 أرقام فقط" 
+                           maxlength="10" 
+                           id="identityNumber">
+                    <select required>
+                        <option value="" disabled selected>الجنس</option>
+                        <option value="ذكر">ذكر</option>
+                        <option value="أنثى">أنثى</option>
+                    </select>
+                </div>
+
+                <div class="form-group email-group">
+                    <input type="email" placeholder="البريد الإلكتروني" required>
+                    <div class="phone-container">
+                        <input type="tel" 
+                               class="phone-input" 
+                               placeholder="5XXXXXXXX" 
+                               required 
+                               pattern="^5[0-9]{8}$" 
+                               title="يجب أن يبدأ بـ 5 ويحتوي على 8 أرقام"
+                               maxlength="9">
+                        <span class="phone-prefix">966+</span>
+                    </div>
+                </div>
+
+                <div class="form-group password-group">
+                    <input type="password" placeholder="كلمة المرور" required>
+                    <input type="password" placeholder="تأكيد كلمة المرور" required>
+                </div>
+
+                <button type="submit" class="submit-btn" onclick="redirectToVolunteerPage(event);">إنشاء الحساب</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

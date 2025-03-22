@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عون - إنشاء حساب مؤسسة</title>
+     <link rel="stylesheet" href="CSS/mainStyle.css">
+     <link rel="stylesheet" href="CSS/register-org.css">
+     
+
+
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="top-right">
+            <img src="Images/Logo-text.png" alt="شعار عون" class="logo">
+        </div>
+
+        <div class="top-left">
+            <span><b>لديك حساب بالفعل ؟</b></span>
+            <a href="index.html" class="login-btn">تسجيل الدخول</a>
+        </div>
+
+        <div class="register-box">
+            <img src="Images/Blue-orgnization.png" alt="أيقونة مؤسسة" class="icon">
+            <h2>إنشاء حساب مؤسسة</h2>
+
+            <form id="organizationForm" novalidate>
+                <div class="form-group">
+                    <input type="text" placeholder="اسم المؤسسة" required>
+                    <select required>
+                        <option value="" disabled selected>المدينة</option>
+                        <option value="الرياض">الرياض</option>
+                        <option value="جدة">جدة</option>
+                        <option value="مكة">مكة</option>
+                        <option value="المدينة المنورة">المدينة المنورة</option>
+                        <option value="الدمام">الدمام</option>
+                        <option value="الخبر">الخبر</option>
+                        <option value="أبها">أبها</option>
+                        <option value="تبوك">تبوك</option>
+                        <option value="القصيم">القصيم</option>
+                        <option value="حائل">حائل</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div class="location-group">
+                        <input type="text" id="location" placeholder="مقر المؤسسة" required>
+                        <button type="button" class="location-btn" onclick="openMap()">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="url" placeholder="الموقع الإلكتروني">
+                </div>
+
+                <div class="form-group">
+                    <input type="email" placeholder="البريد الإلكتروني" required>
+                    <div class="phone-container">
+                        <input type="tel" 
+                               class="phone-input" 
+                               placeholder="5XXXXXXXX" 
+                               required 
+                               pattern="^5[0-9]{8}$" 
+                               title="يجب أن يبدأ بـ 5 ويحتوي على 8 أرقام"
+                               maxlength="9">
+                        <span class="phone-prefix">966+</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" placeholder="كلمة المرور" required>
+                    <input type="password" placeholder="تأكيد كلمة المرور" required>
+                </div>
+
+                <button type="submit" class="submit-btn">إنشاء الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div class="map-content">
+            <button class="close-map" onclick="closeMap()">&times;</button>
+            <div id="map"></div>
+            <button class="submit-btn" onclick="confirmLocation()">تأكيد الموقع</button>
+        </div>
+    </div>
+</body>
+</html>

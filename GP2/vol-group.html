@@ -1,0 +1,1713 @@
+<script>
+    // تحسين وظيفة toggleSidebar بإضافة تأثير انتقالي سلس
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('collapsed');
+        
+        // تحديث أيقونة التوجل بطريقة سلسة
+        const toggleBtn = document.querySelector('.toggle-btn');
+        
+        // إضافة تأثير حركي على زر التوجل عند النقر
+        toggleBtn.classList.add('clicked');
+        setTimeout(() => {
+            toggleBtn.classList.remove('clicked');
+        }, 300);
+        
+        // تعديل محتوى الصفحة بحسب حالة الشريط الجانبي
+        const mainContent = document.querySelector('.main-content');
+        
+        if (sidebar.classList.contains('collapsed')) {
+            mainContent.style.marginRight = '80px';
+            mainContent.classList.add('sidebar-collapsed');
+            // حفظ الحالة في التخزين المحلي
+            localStorage.setItem('sidebarState', 'collapsed');
+        } else {
+            mainContent.style.marginRight = '303px';
+            mainContent.classList.remove('sidebar-collapsed');
+            // حفظ الحالة في التخزين المحلي
+            localStorage.setItem('sidebarState', 'expanded');
+        }
+    }
+
+    // تحسين تأثير التوجل الخاص بالمستخدمين على الأجهزة المحمولة
+    function toggleSidebarMobile() {
+        const sidebar = document.querySelector('.sidebar');
+        const menuButton = document.querySelector('.menu-button');
+        
+        sidebar.classList.toggle('open');
+        
+        // تغيير أيقونة الزر بتأثير انتقالي
+        if (sidebar.classList.contains('open')) {
+            menuButton.innerHTML = '×';
+            menuButton.classList.add('menu-open');
+        } else {
+            menuButton.innerHTML = '☰';
+            menuButton.classList.remove('menu-open');
+        }
+        
+        // إضافة تأثير تعتيم للمحتوى الرئيسي عند فتح القائمة
+        if (sidebar.classList.contains('open')) {
+            // إنشاء طبقة تعتيم إذا لم تكن موجودة
+            if (!document.querySelector('.overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                document.body.appendChild(overlay);
+                
+                // إضافة استماع حدث للنقر على الطبقة لإغلاق الشريط الجانبي
+                overlay.addEventListener('click', toggleSidebarMobile);
+            }
+        } else {
+            // إزالة طبقة التعتيم
+            const overlay = document.querySelector('.overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+    }
+
+    // تهيئة الصفحة عند التحميل
+    window.addEventListener('load', function() {
+        // استرجاع حالة الشريط الجانبي المحفوظة
+        const savedState = localStorage.getItem('sidebarState');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        
+        if (savedState === 'collapsed') {
+            sidebar.classList.add('collapsed');
+            mainContent.style.marginRight = '80px';
+            mainContent.classList.add('sidebar-collapsed');
+        } else {
+            sidebar.classList.remove('collapsed');
+            mainContent.style.marginRight = '303px';
+            mainContent.classList.remove('sidebar-collapsed');
+        }
+        
+        // تهيئة وظائف المهام الجديدة
+        initializeNewTaskFunctions();
+    });
+    
+    // تهيئة وظائف المهام الجديدة
+    function initializeNewTaskFunctions() {
+        // العناصر
+        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+        const progressBar = document.querySelector('.progress-bar');
+        const totalTasksElement = document.querySelector('.progress-stats .stat-item:nth-child(1) .stat-number');
+        const completedTasksElement = document.querySelector('.progress-stats .stat-item:nth-child(2) .stat-number');
+        const percentageElement = document.querySelector('.progress-stats .stat-item:nth-child(3) .stat-number');
+        const reportButtons = document.querySelectorAll('.task-report-btn');
+        const addTaskBtn = document.querySelector('.add-task-btn');
+        const tasksList = document.querySelector('.tasks-list');
+        
+        // عناصر نافذة التقرير
+        const reportModal = document.getElementById('reportModal');
+        const closeReportModal = document.getElementById('closeReportModal');
+        const reportForm = document.getElementById('reportForm');
+        const taskTitleInput = document.getElementById('taskTitle');
+        const reportFileInput = document.getElementById('reportFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const removeFile = document.getElementById('removeFile');
+        const submittedFilesContainer = document.getElementById('submittedFilesContainer');
+        const submittedFilesList = document.getElementById('submittedFilesList');
+        
+        // المتغيرات
+        let currentTaskElement = null;
+        const taskSubmittedFiles = {};
+        
+        // وظيفة تحديث الإحصائيات والتقدم
+        function updateTaskStats() {
+            const totalTasks = document.querySelectorAll('.task-item').length;
+            const completedTasks = document.querySelectorAll('.task-checkbox.done').length;
+            const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            // تحديث العناصر في واجهة المستخدم
+            totalTasksElement.textContent = totalTasks;
+            completedTasksElement.textContent = completedTasks;
+            percentageElement.textContent = percentage + '%';
+            progressBar.style.width = percentage + '%';
+        }
+        
+        // إضافة المستمعين لكل صندوق اختيار
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('click', function() {
+                this.classList.toggle('done');
+                if (this.classList.contains('done')) {
+                    this.innerHTML = '✓';
+                } else {
+                    this.innerHTML = '';
+                }
+                updateTaskStats();
+            });
+        });
+        
+        // إضافة المستمعين لأزرار حذف المهام
+        const deleteButtons = document.querySelectorAll('.task-delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const taskItem = this.closest('.task-item');
+                const taskTitle = taskItem.querySelector('.task-title').textContent;
+                
+                // تأكيد حذف المهمة
+                if (confirm(`هل أنت متأكد من رغبتك في حذف المهمة "${taskTitle}"؟`)) {
+                    // حذف المهمة من القائمة
+                    taskItem.remove();
+                    
+                    // إضافة زر حذف للمهمة الجديدة
+                const newDeleteBtn = newTask.querySelector('.task-delete-btn');
+                newDeleteBtn.addEventListener('click', function() {
+                    const taskItem = this.closest('.task-item');
+                    const taskTitle = taskItem.querySelector('.task-title').textContent;
+                    
+                    // تأكيد حذف المهمة
+                    if (confirm(`هل أنت متأكد من رغبتك في حذف المهمة "${taskTitle}"؟`)) {
+                        // حذف المهمة من القائمة
+                        taskItem.remove();
+                        
+                        // تحديث الإحصائيات
+                        updateTaskStats();
+                    }
+                });
+                
+                // تحديث الإحصائيات
+                    updateTaskStats();
+                }
+            });
+        });
+        
+        // فتح نافذة التقرير عند النقر على زر تسليم التقرير
+        reportButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (this.classList.contains('submitted')) {
+                    // عرض الملفات المرفوعة سابقًا
+                    const taskElement = this.closest('.task-item');
+                    const taskTitle = taskElement.querySelector('.task-title').textContent;
+                    
+                    currentTaskElement = taskElement;
+                    taskTitleInput.value = taskTitle;
+                    
+                    // عرض الملفات المرفوعة إن وجدت
+                    const taskId = taskElement.dataset.taskId || 'task_' + Math.random().toString(36).substr(2, 9);
+                    taskElement.dataset.taskId = taskId;
+                    
+                    // تحديث قائمة الملفات المرفوعة
+                    updateSubmittedFilesList(taskId);
+                    
+                    // فتح النافذة
+                    reportModal.classList.add('active');
+                } else {
+                    // تهيئة نافذة تسليم تقرير جديد
+                    const taskElement = this.closest('.task-item');
+                    const taskTitle = taskElement.querySelector('.task-title').textContent;
+                    
+                    currentTaskElement = taskElement;
+                    taskTitleInput.value = taskTitle;
+                    
+                    // إخفاء معلومات الملف ومسح الإدخالات
+                    fileInfo.classList.remove('active');
+                    fileName.textContent = '';
+                    reportFileInput.value = '';
+                    document.getElementById('reportNotes').value = '';
+                    
+                    // إخفاء قائمة الملفات المرفوعة (إذا كانت فارغة)
+                    const taskId = taskElement.dataset.taskId || 'task_' + Math.random().toString(36).substr(2, 9);
+                    taskElement.dataset.taskId = taskId;
+                    
+                    if (taskSubmittedFiles[taskId] && taskSubmittedFiles[taskId].length > 0) {
+                        updateSubmittedFilesList(taskId);
+                    } else {
+                        submittedFilesContainer.classList.remove('active');
+                    }
+                    
+                    // فتح النافذة
+                    reportModal.classList.add('active');
+                }
+            });
+        });
+        
+        // إغلاق نافذة التقرير
+        closeReportModal.addEventListener('click', function() {
+            reportModal.classList.remove('active');
+        });
+        
+        // النقر خارج النافذة يغلقها
+        reportModal.addEventListener('click', function(e) {
+            if (e.target === reportModal) {
+                reportModal.classList.remove('active');
+            }
+        });
+        
+        // التعامل مع تحميل الملف
+        reportFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileInfo.classList.add('active');
+                fileName.textContent = this.files[0].name;
+            } else {
+                fileInfo.classList.remove('active');
+                fileName.textContent = '';
+            }
+        });
+        
+        // إزالة الملف المختار
+        removeFile.addEventListener('click', function() {
+            reportFileInput.value = '';
+            fileInfo.classList.remove('active');
+            fileName.textContent = '';
+        });
+        
+        // تسليم نموذج التقرير
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentTaskElement) return;
+            
+            const taskId = currentTaskElement.dataset.taskId;
+            const reportBtn = currentTaskElement.querySelector('.task-report-btn');
+            const notes = document.getElementById('reportNotes').value;
+            
+            if (reportFileInput.files.length === 0 && !reportBtn.classList.contains('submitted')) {
+                alert('الرجاء اختيار ملف للتقرير');
+                return;
+            }
+            
+            // تغيير حالة زر التقرير
+            reportBtn.classList.add('submitted');
+            reportBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <path d="M9 15l3 3 5-5"/>
+                </svg>
+                تم تسليم التقرير
+            `;
+            
+            // تخزين معلومات الملف
+            if (reportFileInput.files.length > 0) {
+                const file = reportFileInput.files[0];
+                if (!taskSubmittedFiles[taskId]) {
+                    taskSubmittedFiles[taskId] = [];
+                }
+                
+                const fileData = {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    date: new Date().toLocaleDateString('ar-SA'),
+                    notes: notes
+                };
+                
+                // تقنياً، هنا يجب رفع الملف إلى الخادم
+                // لكننا سنقوم بمحاكاة ذلك عن طريق تخزين بيانات الملف فقط
+                taskSubmittedFiles[taskId].push(fileData);
+                
+                // تحديث قائمة الملفات المرفوعة
+                updateSubmittedFilesList(taskId);
+            }
+            
+            // إغلاق النافذة بعد تقديم التقرير
+            setTimeout(() => {
+                reportModal.classList.remove('active');
+                
+                // مسح النموذج
+                reportFileInput.value = '';
+                fileInfo.classList.remove('active');
+                document.getElementById('reportNotes').value = '';
+                
+                // تنبيه المستخدم
+                alert('تم تسليم التقرير بنجاح!');
+            }, 500);
+        });
+        
+        // تحديث قائمة الملفات المرفوعة
+        function updateSubmittedFilesList(taskId) {
+            if (!taskSubmittedFiles[taskId] || taskSubmittedFiles[taskId].length === 0) {
+                submittedFilesContainer.classList.remove('active');
+                return;
+            }
+            
+            submittedFilesContainer.classList.add('active');
+            submittedFilesList.innerHTML = '';
+            
+            taskSubmittedFiles[taskId].forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'submitted-file-item';
+                
+                // تحديد أيقونة الملف بناءً على نوعه
+                let fileIcon = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="submitted-file-icon">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                `;
+                
+                if (file.type.includes('pdf')) {
+                    fileIcon = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="submitted-file-icon">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <text x="8" y="19" font-family="sans-serif" font-size="10" fill="#e74c3c">PDF</text>
+                        </svg>
+                    `;
+                } else if (file.type.includes('word') || file.type.includes('doc')) {
+                    fileIcon = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2980b9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="submitted-file-icon">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <text x="8" y="19" font-family="sans-serif" font-size="10" fill="#2980b9">DOC</text>
+                        </svg>
+                    `;
+                } else if (file.type.includes('sheet') || file.type.includes('excel') || file.type.includes('xls')) {
+                    fileIcon = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="submitted-file-icon">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <text x="8" y="19" font-family="sans-serif" font-size="10" fill="#27ae60">XLS</text>
+                        </svg>
+                    `;
+                }
+                
+                fileItem.innerHTML = `
+                    ${fileIcon}
+                    <div class="submitted-file-name">${file.name}</div>
+                    <div class="submitted-file-date">${file.date}</div>
+                    <div class="submitted-file-actions">
+                        <button type="button" class="submitted-file-view" data-index="${index}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button type="button" class="submitted-file-download" data-index="${index}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                submittedFilesList.appendChild(fileItem);
+            });
+            
+            // إضافة مستمعي أحداث لأزرار العرض والتنزيل
+            const viewButtons = submittedFilesList.querySelectorAll('.submitted-file-view');
+            const downloadButtons = submittedFilesList.querySelectorAll('.submitted-file-download');
+            
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.dataset.index;
+                    const file = taskSubmittedFiles[taskId][index];
+                    
+                    // محاكاة عرض الملف (في التطبيق الحقيقي، سيتم فتح الملف للعرض)
+                    alert(`عرض الملف: ${file.name}\nالملاحظات: ${file.notes || 'لا توجد ملاحظات'}`);
+                });
+            });
+            
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.dataset.index;
+                    const file = taskSubmittedFiles[taskId][index];
+                    
+                    // محاكاة تنزيل الملف (في التطبيق الحقيقي، سيتم تنزيل الملف الفعلي)
+                    alert(`تنزيل الملف: ${file.name}`);
+                });
+            });
+        }
+        
+        // زر إضافة مهمة جديدة
+        if (addTaskBtn) {
+            addTaskBtn.addEventListener('click', function() {
+                // إنشاء مهمة جديدة
+                const taskId = 'task_' + Math.random().toString(36).substr(2, 9);
+                const newTask = document.createElement('div');
+                newTask.className = 'task-item';
+                newTask.dataset.taskId = taskId;
+                
+                // تعيين محتوى المهمة
+                newTask.innerHTML = `
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">مهمة جديدة</div>
+                        <div class="task-description">وصف المهمة الجديدة</div>
+                    </div>
+                    <div class="task-meta">
+                        <button class="task-report-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            تسليم التقرير
+                        </button>
+                        <button class="task-delete-btn" title="حذف المهمة">×</button>
+                    </div>
+                `;
+                
+                // إضافة المهمة إلى القائمة
+                tasksList.appendChild(newTask);
+                
+                // إضافة مستمعي الأحداث للعناصر الجديدة
+                const newCheckbox = newTask.querySelector('.task-checkbox');
+                const newReportBtn = newTask.querySelector('.task-report-btn');
+                
+                // مستمع صندوق الاختيار
+                newCheckbox.addEventListener('click', function() {
+                    this.classList.toggle('done');
+                    if (this.classList.contains('done')) {
+                        this.innerHTML = '✓';
+                    } else {
+                        this.innerHTML = '';
+                    }
+                    updateTaskStats();
+                });
+                
+                // مستمع زر التقرير
+                newReportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (this.classList.contains('submitted')) {
+                        // عرض الملفات المرفوعة سابقًا
+                        const taskElement = this.closest('.task-item');
+                        const taskTitle = taskElement.querySelector('.task-title').textContent;
+                        
+                        currentTaskElement = taskElement;
+                        taskTitleInput.value = taskTitle;
+                        
+                        // تحديث قائمة الملفات المرفوعة
+                        updateSubmittedFilesList(taskId);
+                        
+                        reportModal.classList.add('active');
+                    } else {
+                        // تهيئة نافذة تسليم تقرير جديد
+                        const taskElement = this.closest('.task-item');
+                        const taskTitle = taskElement.querySelector('.task-title').textContent;
+                        
+                        currentTaskElement = taskElement;
+                        taskTitleInput.value = taskTitle;
+                        
+                        fileInfo.classList.remove('active');
+                        fileName.textContent = '';
+                        reportFileInput.value = '';
+                        document.getElementById('reportNotes').value = '';
+                        
+                        submittedFilesContainer.classList.remove('active');
+                        reportModal.classList.add('active');
+                    }
+                });
+                
+                // تحديث الإحصائيات
+                updateTaskStats();
+                
+                // تمرير إلى المهمة الجديدة
+                newTask.scrollIntoView({ behavior: 'smooth' });
+                
+                // تفعيل المهمة للتحرير (في حالة تطوير مستقبلي)
+                const taskTitle = newTask.querySelector('.task-title');
+                const taskDescription = newTask.querySelector('.task-description');
+                
+                // يمكن هنا إضافة محرر للعنوان والوصف (لتطوير مستقبلي)
+            });
+        }
+        
+        // تهيئة الإحصائيات عند تحميل الصفحة
+        updateTaskStats();
+    }
+</script>
+</body>
+</html><!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+<link rel="stylesheet" href="CSS/mainStyle.css">
+<title>برنامج وئام</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Cairo', Arial, sans-serif;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+        background: #f8f9fa;
+    }
+
+    .sidebar {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        height: 100vh;
+        width: 303px;
+        background: linear-gradient(180deg, #5198B7 0%, #6FA16B 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        color: white;
+        justify-content: space-between;
+        transition: width 0.5s ease-in-out;
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 100;
+    }
+
+    .sidebar.collapsed {
+        width: 80px;
+        padding: 20px 10px;
+        padding-top: 100px;
+    }
+
+    .sidebar.collapsed .profile-section {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar.collapsed .program-name,
+    .sidebar.collapsed .nav-links a span,
+    .sidebar.collapsed .support-text {
+        display: none;
+    }
+
+    .sidebar.collapsed .nav-links a {
+        justify-content: center;
+    }
+
+    .profile-section {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 20px;
+        transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+    }
+
+    .profile-circle {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: #fff;
+        background-image: url("Images/Image-prog.jpg");
+        background-size: cover;
+        background-position: center;
+        transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+        border: 4px solid #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar.collapsed .profile-circle {
+        width: 100%;
+        height: 100%;
+    }
+
+    .nav-links {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+        margin-top: 30px;
+    }
+
+    .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        text-decoration: none;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 17px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease, justify-content 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-5px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .program-name {
+        font-size: 40px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: opacity 0.5s ease-in-out;
+        padding-right: 15px;
+    }
+
+    .support-section {
+        width: 100%;
+        margin-top: auto;
+        text-align: right;
+        font-size: 16px;
+        color: white;
+        padding: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: justify-content 0.5s ease-in-out;
+    }
+
+    .sidebar.collapsed .support-section {
+        justify-content: center;
+    }
+
+    .support-icon {
+        width: 20px;
+        height: 20px;
+        margin-top: 20px;
+    }
+
+    .support-section a {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        margin-top: 4px;
+    }
+
+    .toggle-btn {
+        position: absolute;
+        top: 20px;
+        left: -20px;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #5198B7 0%, #6FA16B 100%);
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .toggle-btn.clicked {
+        transform: scale(0.9);
+        transition: transform 0.2s ease;
+    }
+
+    .toggle-icon {
+        width: 24px;
+        height: 24px;
+        fill: white;
+        stroke: white;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .sidebar.collapsed .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .main-content {
+        transition: margin-right 0.5s ease-in-out;
+        flex: 1;
+        margin-right: 303px;
+        padding: 32px;
+    }
+
+    .main-content.sidebar-collapsed {
+        margin-right: 80px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .welcome-text {
+        font-size: 30px;
+        color: #2C3E50;
+        font-weight: bold;
+    }
+
+    .role-text {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .logout-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    /* New styles based on the image */
+    .page-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    @media (max-width: 1024px) {
+        .page-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Task styles */
+    .tasks-section {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .tasks-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .tasks-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #384B57;
+    }
+    
+    .task-progress-overview {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .progress-stats {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #5198B7;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        margin: 10px 0;
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #5198B7 0%, #6FA16B 100%);
+        border-radius: 4px;
+    }
+    
+    .task-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: transform 0.3s ease;
+    }
+    
+    .task-item:hover {
+        transform: translateX(-5px);
+    }
+    
+    .task-checkbox {
+        width: 22px;
+        height: 22px;
+        border: 2px solid #5198B7;
+        border-radius: 50%;
+        margin-left: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    
+    .task-checkbox.done {
+        background-color: #5FAD5F;
+        border-color: #5FAD5F;
+        color: white;
+    }
+    
+    .task-content {
+        flex: 1;
+    }
+    
+    .task-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .task-description {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .task-meta {
+        display: flex;
+        align-items: center;
+        margin-right: auto;
+        gap: 5px;
+    }
+    
+    .task-delete-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+    }
+    
+    .task-item:hover .task-delete-btn {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .task-delete-btn:hover {
+        background-color: #bd2130;
+    }
+    
+    .task-report-btn {
+        background-color: #5198B7;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .task-report-btn:hover {
+        background-color: #4389a6;
+    }
+    
+    .task-report-btn.submitted {
+        background-color: #5FAD5F;
+    }
+    
+    .task-report-btn.submitted:hover {
+        background-color: #4e9c4e;
+    }
+    
+    /* نافذة تحميل التقرير */
+    .report-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .report-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .report-modal-content {
+        background-color: white;
+        border-radius: 10px;
+        width: 500px;
+        max-width: 90%;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        position: relative;
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+    
+    .report-modal.active .report-modal-content {
+        transform: translateY(0);
+    }
+    
+    .report-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .report-modal-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #384B57;
+    }
+    
+    .report-modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #6c757d;
+        cursor: pointer;
+    }
+    
+    .report-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .form-label {
+        font-weight: bold;
+        color: #384B57;
+    }
+    
+    .form-input {
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+    
+    .report-upload {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ced4da;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .report-upload:hover {
+        border-color: #5198B7;
+        background-color: rgba(81, 152, 183, 0.05);
+    }
+    
+    .report-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        cursor: pointer;
+    }
+    
+    .report-upload-icon {
+        width: 40px;
+        height: 40px;
+        color: #5198B7;
+    }
+    
+    .report-upload-text {
+        color: #6c757d;
+    }
+    
+    #reportFile {
+        display: none;
+    }
+    
+    .file-info {
+        display: none;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+    
+    .file-info.active {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .file-name {
+        font-weight: bold;
+        color: #384B57;
+    }
+    
+    .file-remove {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+    }
+    
+    .submit-report-btn {
+        background: linear-gradient(135deg, #5198B7 0%, #6FA16B 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: opacity 0.3s ease;
+    }
+    
+    .submit-report-btn:hover {
+        opacity: 0.9;
+    }
+    
+    .submitted-files-container {
+        margin-top: 15px;
+        display: none;
+    }
+    
+    .submitted-files-container.active {
+        display: block;
+    }
+    
+    .submitted-files-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #384B57;
+    }
+    
+    .submitted-files-list {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .submitted-file-item {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .submitted-file-item:last-child {
+        border-bottom: none;
+    }
+    
+    .submitted-file-icon {
+        margin-left: 10px;
+        color: #5198B7;
+    }
+    
+    .submitted-file-name {
+        flex: 1;
+    }
+    
+    .submitted-file-date {
+        color: #6c757d;
+        font-size: 12px;
+    }
+    
+    .submitted-file-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .submitted-file-download, 
+    .submitted-file-view {
+        background: none;
+        border: none;
+        color: #5198B7;
+        cursor: pointer;
+        padding: 3px;
+    }
+    
+    .submitted-file-download:hover, 
+    .submitted-file-view:hover {
+        color: #4389a6;
+    }
+    
+    .add-task-btn {
+        background: linear-gradient(135deg, #5198B7 0%, #6FA16B 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* Team section */
+    .section-title {
+        font-size: 28px;
+        color: #2C3E50;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .team-container {
+        margin-bottom: 30px;
+    }
+
+    .team-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .team-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 10px;
+    }
+
+    .team-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #384B57;
+    }
+
+    .team-members {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .member-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        width: 48%;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .member-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .member-avatar {
+        width: 60px;
+        height: 60px;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 2px solid #5198B7;
+        overflow: hidden;
+    }
+
+    .member-info {
+        flex: 1;
+    }
+
+    .member-name {
+        font-weight: bold;
+        font-size: 18px;
+        color: #384B57;
+        margin-bottom: 4px;
+    }
+
+    .member-role {
+        color: #5198B7;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        padding: 2px 8px;
+        background-color: rgba(81, 152, 183, 0.1);
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .member-contact {
+        color: #666;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    
+    .member-contact:last-child {
+        margin-bottom: 0;
+    }
+    
+    .member-contact svg {
+        margin-left: 5px;
+        flex-shrink: 0;
+    }
+
+    /* تعديلات جديدة */
+    .team-description-container {
+        margin-bottom: 15px;
+        color: #666;
+        padding: 0 5px;
+    }
+
+    .team-separator {
+        height: 1px;
+        background-color: #e9ecef;
+        margin: 15px 0;
+        width: 100%;
+    }
+
+    .whatsapp-container {
+        margin-bottom: 15px;
+    }
+
+    .whatsapp-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #384B57;
+        margin-bottom: 8px;
+    }
+
+    .whatsapp-link {
+        color: #5198B7;
+        word-break: break-all;
+        direction: ltr;
+        text-align: left;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    /* Mobile responsive */
+    .menu-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: #5198B7; 
+        font-size: 30px;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 1100;
+        transition: color 0.3s, transform 0.3s ease;
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -303px;
+            width: 303px;
+            height: 100%;
+            padding: 60px 20px 40px;
+            z-index: 1000;
+            transition: right 0.3s ease-in-out;
+        }
+
+        .sidebar.open {
+            right: 0;
+            width: 303px;
+        }
+
+        .menu-button {
+            display: block;
+        }
+
+        .main-content {
+            margin-right: 0 !important;
+        }
+
+        .member-card {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="layout">
+    <button class="menu-button" onclick="toggleSidebarMobile()">☰</button>
+    <div class="sidebar">
+        <div class="toggle-btn" onclick="toggleSidebar()">
+            <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </div>
+        <div class="program-logo">
+            <img src="Images/logo-weaam.png" alt="برنامج وئام" style="width: 100px; height: auto; margin-bottom: 10px;">
+        </div>
+        <div class="program-name">
+            برنامج وئام
+        </div>
+        <nav class="nav-links">
+            <a href="volnteer-interface.html">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>الصفحة الرئيسية</span>
+            </a>
+            <a href="vol-calendar.html">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>جدول البرنامج</span>
+            </a>
+            <a href="teams.html" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <polyline points="17 11 19 13 23 9"/>
+                </svg>
+                <span>فريقي</span>
+            </a>
+            <a href="attendance.html">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>متابعة الحضور والغياب</span>
+            </a>
+            <a href="certificate.html">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                </svg>
+                <span>شهادة التطوع</span>
+            </a>
+            <a href="volunteer-file.html">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>ملف التطوع</span>
+            </a>
+        </nav>
+        <div class="support-section">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="support-icon">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>      
+            <div class="support-text">
+               <b> الدعم الفني: </b>
+                <br><a href="mailto:Awninfo@gmail.com">Awninfo@gmail.com</a></br>
+            </div>
+        </div>
+    </div>
+    <main class="main-content">
+        <header class="top-bar">
+            <div>
+                <h3 class="welcome-text">أهلاً سارة</h3>
+                <p class="role-text">مسؤول التواصل الإعلامي</p>
+            </div>
+            <button class="logout-btn">تسجيل الخروج</button>
+        </header>
+        
+        <!-- قسم الفريق -->
+        <h2 class="section-title">فريقي</h2>
+        
+        <div class="page-container">
+            <!-- قسم الفريق - العمود الأول -->
+            <div class="team-card">
+                <div class="team-header">
+                    <div class="team-name">فريق 1</div>
+                </div>
+                <div class="team-description-container">
+                    <p>وصف الفريق</p>
+                </div>
+                
+                <!-- خط فاصل بين وصف الفريق والواتساب -->
+                <div class="team-separator"></div>
+                
+                <div class="whatsapp-container">
+                    <div class="whatsapp-title">رابط المجموعة على WhatsApp :</div>
+                    <div class="whatsapp-link">://chat-whatsapp.com/EOJEX5Ioji87j043xjhLi1</div>
+                </div>
+                
+                <div class="team-members">
+                    <div class="member-card">
+                        <div class="member-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">خلود صالح</div>
+                            <div class="member-role">المسمى التطوعي</div>
+                            <div class="member-contact">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                kholoud@gmail.com
+                            </div>
+                            <div class="member-contact">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                0534977421
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="member-card">
+                        <div class="member-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">مها خالد</div>
+                            <div class="member-role">المسمى التطوعي</div>
+                            <div class="member-contact">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                Maha@gmail.com
+                            </div>
+                            <div class="member-contact">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5198B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                0502847621
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- قسم المهام - العمود الثاني -->
+            <div class="tasks-section">
+                <div class="tasks-header">
+                    <div class="tasks-title">مهام الفريق</div>
+                </div>
+                
+                <div class="task-progress-overview">
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">إجمالي المهام</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">مهام مكتملة</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">62.5%</div>
+                            <div class="stat-label">نسبة الإنجاز</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 62.5%"></div>
+                </div>
+                
+                <div class="tasks-list">
+                    <div class="task-item" data-task-id="task_1">
+                        <div class="task-checkbox done">✓</div>
+                        <div class="task-content">
+                            <div class="task-title">إعداد خطة التواصل الإعلامي</div>
+                            <div class="task-description">إعداد استراتيجية للتواصل عبر منصات التواصل الاجتماعي</div>
+                        </div>
+                        <div class="task-meta">
+                            <button class="task-report-btn submitted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M9 15l3 3 5-5"/>
+                                </svg>
+                                تم تسليم التقرير
+                            </button>
+                            <button class="task-delete-btn" title="حذف المهمة">×</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-item" data-task-id="task_2">
+                        <div class="task-checkbox done">✓</div>
+                        <div class="task-content">
+                            <div class="task-title">تصميم منشورات الفعالية</div>
+                            <div class="task-description">تصميم إعلانات الفعالية للنشر على مواقع التواصل</div>
+                        </div>
+                        <div class="task-meta">
+                            <button class="task-report-btn submitted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M9 15l3 3 5-5"/>
+                                </svg>
+                                تم تسليم التقرير
+                            </button>
+                            <button class="task-delete-btn" title="حذف المهمة">×</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-item" data-task-id="task_3">
+                        <div class="task-checkbox"></div>
+                        <div class="task-content">
+                            <div class="task-title">تقرير أداء الحملة الإعلامية</div>
+                            <div class="task-description">تحليل نتائج الحملة الإعلامية وتأثيرها</div>
+                        </div>
+                        <div class="task-meta">
+                            <button class="task-report-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                تسليم التقرير
+                            </button>
+                            <button class="task-delete-btn" title="حذف المهمة">×</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-item" data-task-id="task_4">
+                        <div class="task-checkbox done">✓</div>
+                        <div class="task-content">
+                            <div class="task-title">التواصل مع الشركاء الإعلاميين</div>
+                            <div class="task-description">توثيق علاقات مع الصحف والقنوات الإعلامية</div>
+                        </div>
+                        <div class="task-meta">
+                            <button class="task-report-btn submitted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M9 15l3 3 5-5"/>
+                                </svg>
+                                تم تسليم التقرير
+                            </button>
+                            <button class="task-delete-btn" title="حذف المهمة">×</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="add-task-btn">
+                    <svg x                                                             mlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    إضافة مهمة جديدة
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- نافذة تحميل التقرير -->
+<div class="report-modal" id="reportModal">
+    <div class="report-modal-content">
+        <div class="report-modal-header">
+            <div class="report-modal-title">تسليم تقرير</div>
+            <button class="report-modal-close" id="closeReportModal">×</button>
+        </div>
+        
+        <form class="report-form" id="reportForm">
+            <div class="form-group">
+                <label class="form-label">عنوان المهمة</label>
+                <input type="text" class="form-input" id="taskTitle" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ملاحظات</label>
+                <textarea class="form-input" id="reportNotes" rows="3" placeholder="أضف ملاحظاتك حول التقرير..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ملف التقرير</label>
+                <div class="report-upload">
+                    <label class="report-upload-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="report-upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div class="report-upload-text">اضغط هنا لرفع ملف أو اسحب وأفلت الملف هنا</div>
+                        <input type="file" id="reportFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+                    </label>
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <div class="file-name" id="fileName"></div>
+                    <button type="button" class="file-remove" id="removeFile">×</button>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-report-btn">تسليم التقرير</button>
+            
+            <div class="submitted-files-container" id="submittedFilesContainer">
+                <div class="submitted-files-title">الملفات المرفوعة</div>
+                <div class="submitted-files-list" id="submittedFilesList">
+                    <!-- هنا سيتم عرض الملفات المرفوعة -->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

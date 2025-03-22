@@ -37,6 +37,8 @@
             opacity: 0.1;
             z-index: -1;
         }
+        
+        
         .header {
             display: flex;
             justify-content: space-between;
@@ -75,10 +77,9 @@
         
         .account-question {
             color: #4a8db7;
-            font-size: 16px;
-            margin-left: 10px;
+            font-size: 14px;
+            margin-left: 8px;
         }
-        
         .main-content {
             flex: 1;
             display: flex;
@@ -87,19 +88,20 @@
             padding: 0 20px;
         }
         
-        .success-card {
+          
+        .recovery-card {
             background-color: white;
-            border-radius: 15px;
+            border-radius: 12px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
-            padding: 35px 30px;
+            max-width: 450px;
+            padding: 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
         
-        .success-card::after {
+        .recovery-card::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -110,31 +112,52 @@
             border-radius: 0 0 15px 15px;
         }
         
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            color: #5aaa75;
+        .lock-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            color: #4a8db7;
         }
         
-        .success-title {
-            font-size: 22px;
+        .recovery-title {
+            font-size: 24px;
             font-weight: bold;
             color: #4a8db7;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+            text-align: right;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: #4a5568;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            height: 38px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 0 12px;
+            font-size: 14px;
         }
         
         .btn {
             display: inline-block;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-size: 15px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-            max-width: 220px;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
         .btn-primary {
@@ -155,38 +178,69 @@
         </div>
         <div class="login-section">
             <a href="#" class="login-link">
-                <span class="account-question">لديك حساب بالفعل ؟</span>
+                <span class="account-question" id="loginBtn">لديك حساب بالفعل ؟</span>
                 تسجيل الدخول
             </a>
         </div>
     </div>
     
     <div class="main-content">
-        <div class="success-card">
-            <div class="success-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        <div class="recovery-card">
+            <div class="lock-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    <circle cx="12" cy="16" r="1"></circle>
                 </svg>
             </div>
             
-            <h1 class="success-title">تم تغيير كلمة المرور بنجاح</h1>
+            <h1 class="recovery-title">استرجاع كلمة المرور</h1>
             
-            <button class="btn btn-primary" id="loginBtn">تسجيل الدخول</button>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label class="form-label">كلمة المرور الجديدة</label>
+                    <input type="password" class="form-control" id="newPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">تأكيد كلمة المرور</label>
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="resetPasswordBtn">التالي</button>
+            </form>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Login button click
             document.getElementById('loginBtn').addEventListener('click', function() {
                 window.location.href = 'login.html';
             });
-            
-            // Login link in header
-            document.querySelector('.login-link').addEventListener('click', function(e) {
+            document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                window.location.href = 'login.html';
+                
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Validate password
+                if (!newPassword) {
+                    alert('الرجاء إدخال كلمة المرور الجديدة');
+                    return;
+                }
+                
+                if (newPassword.length < 8) {
+                    alert('يجب أن تتكون كلمة المرور من 8 أحرف على الأقل');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('كلمات المرور غير متطابقة');
+                    return;
+                }
+                
+                // Navigate to the success page
+                window.location.href = 'success.html';
             });
         });
     </script>

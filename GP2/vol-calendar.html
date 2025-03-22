@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج وئام - جدول البرنامج</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #5198B7 0%, #6EA16D 100%);
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            color: white;
+            padding: 32px;
+            z-index: 10;
+        }
+
+        .logo-section {
+            text-align: center;
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: white;
+            padding: 10px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 17px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-left: 5px;
+        }
+
+        .nav-icon img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+        }
+
+        #icon-schedule, 
+        #icon-attendance {
+            width: 38px;
+            height: 38px;
+        }
+
+        .support-section {
+            position: absolute;
+            bottom: 30px;
+            width: calc(100% - 64px);
+        }
+
+        .support-section .support-title {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .support-section .support-email {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .support-section .support-email .nav-icon {
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 20px;
+            position: relative;
+            height: 100vh;
+            overflow: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+        }
+
+        .user-welcome {
+            text-align: right;
+        }
+
+        .welcome-text {
+            font-size: 24px;
+            color: #2C3E50;
+            margin-bottom: 5px;
+        }
+
+        .role-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Timeline Styles */
+        .timeline-section {
+            position: relative;
+            padding: 5px 0;
+            margin: 5px 0 15px 0;
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            height: 6px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+            z-index: 1;
+            border-radius: 3px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            height: 6px;
+            width: 33%;
+            background: linear-gradient(90deg, #4C9F9F 0%, #5FAD5F 100%);
+            transform: translateY(-50%);
+            z-index: 2;
+            border-radius: 3px;
+        }
+
+        .timeline-point {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: white;
+            border: 5px solid #4C9F9F;
+            position: relative;
+            z-index: 3;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.2);
+        }
+
+        .timeline-point.active {
+            background: #4C9F9F;
+        }
+
+        .timeline-point.done {
+            background: #5FAD5F;
+            border-color: #5FAD5F;
+        }
+
+        .timeline-point::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 40px;
+            right: 50%;
+            transform: translateX(50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: #384B57;
+            white-space: nowrap;
+        }
+
+        /* Calendar Styles */
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .schedule-title {
+            font-size: 24px;
+            color: #2C3E50;
+        }
+
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .month-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2C3E50;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #2C3E50;
+            cursor: pointer;
+        }
+
+        .calendar-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: calc(100vh - 210px); /* رفع التقويم */
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #f0f0f0;
+        }
+
+        .calendar-header .day-name {
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            border-left: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .calendar-header .day-name:last-child {
+            border-left: none;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            height: var(--cell-height, 80px);
+            border-left: 1px solid #eee;
+            border-top: 1px solid #eee;
+            padding: 3px;
+            position: relative;
+            overflow: auto;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-left: none;
+        }
+
+        .day-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            line-height: 25px;
+            margin: 3px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .today .day-number {
+            background: #4C9F9F;
+            color: white;
+        }
+
+        .other-month {
+            background: #f9f9f9;
+            color: #aaa;
+        }
+
+        .event {
+            background: #e0f5ff;
+            border-radius: 4px;
+            padding: 3px 6px;
+            margin: 3px 0;
+            font-size: 11px;
+            cursor: pointer;
+            color: #0066cc;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .event.important {
+            background: #ffe0e0;
+            color: #cc0000;
+        }
+
+        .event.start {
+            background: #e0ffe0;
+            color: #007700;
+        }
+
+        .event-details {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 10px;
+            z-index: 5;
+            min-width: 200px;
+            top: 100%;
+            left: 0;
+        }
+
+        .event:hover + .event-details,
+        .event-details:hover {
+            display: block;
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+            
+            .logo-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .logo-section h2,
+            .nav-links span,
+            .support-section .support-title,
+            .support-section .support-email span {
+                display: none;
+            }
+            
+            .nav-links a {
+                justify-content: center;
+                padding: 12px 0;
+            }
+            
+            .support-section {
+                width: calc(100% - 20px);
+                text-align: center;
+            }
+            
+            .support-section .support-email {
+                justify-content: center;
+            }
+            
+            .main-content {
+                margin-right: 70px;
+            }
+            
+            .nav-icon {
+                width: 26px;
+                height: 26px;
+            }
+            
+            #icon-schedule, 
+            #icon-attendance {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header .day-name {
+                padding: 3px;
+                font-size: 14px;
+            }
+            
+            .calendar-day {
+                min-height: 60px;
+            }
+            
+            .day-number {
+                width: 25px;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+            }
+            
+            .event {
+                padding: 2px 4px;
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-header, 
+            .calendar-grid {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .calendar-header .day-name {
+                border-left: none;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .calendar-day {
+                min-height: 50px;
+                border-left: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-container">
+                <img src="/api/placeholder/120/120" alt="برنامج عطاء" class="logo" id="logo">
+            </div>
+            <h2>برنامج عطاء</h2>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">
+                <div class="nav-icon" id="icon-home">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                <span>الصفحة الرئيسية</span>
+            </a>
+            <a href="#" class="nav-link active">
+                <div class="nav-icon" id="icon-schedule">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <span>جدول البرنامج</span>
+            </a>
+            <a href="#" class="nav-link">
+                <div class="nav-icon" id="icon-volunteers">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <polyline points="17 11 19 13 23 9"/>
+                    </svg>
+                </div>
+                <span>المتطوعين</span>
+            </a>
+            <a href="#" class="nav-link">
+                <div class="nav-icon" id="icon-attendance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <span>متابعة الحضور والغياب</span>
+            </a>
+            <a href="#" class="nav-link">
+                <div class="nav-icon" id="icon-certificates">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <span>تسليم الشهادات</span>
+            </a>
+        </nav>
+        
+        <div class="support-section">
+            <div class="support-title">الدعم الفني</div>
+            <div class="support-email">
+                <div class="nav-icon">✉️</div>
+                <span>Awninfo@gmail.com</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="user-welcome">
+                <h3 class="welcome-text">أهلاً سارة</h3>
+                <p class="role-text">مسؤول التواصل الإعلامي</p>
+            </div>
+            <button class="logout-btn">تسجيل الخروج</button>
+        </div>
+
+        <!-- التايم لاين -->
+        <div class="timeline-section">
+            <div class="timeline-points">
+                <div class="timeline-line"></div>
+                <div class="timeline-progress"></div>
+                <div class="timeline-point done" data-label="البداية"></div>
+                <div class="timeline-point active" data-label="المنتصف"></div>
+                <div class="timeline-point" data-label="النهاية"></div>
+            </div>
+        </div>
+
+        <div class="schedule-section">
+            <div class="schedule-header">
+                <h2 class="schedule-title">جدول البرنامج</h2>
+                
+                <div class="month-navigation">
+                    <button class="nav-button" id="prev-month">❮</button>
+                    <div class="month-name" id="current-month">نوفمبر</div>
+                    <button class="nav-button" id="next-month">❯</button>
+                </div>
+            </div>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div class="day-name">الأحد</div>
+                    <div class="day-name">الاثنين</div>
+                    <div class="day-name">الثلاثاء</div>
+                    <div class="day-name">الأربعاء</div>
+                    <div class="day-name">الخميس</div>
+                    <div class="day-name">الجمعة</div>
+                    <div class="day-name">السبت</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar cells will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // بيانات الأحداث (في التطبيق الحقيقي ستكون من قاعدة البيانات)
+        const events = {
+            "2025-02-01": [{ title: "بداية البرنامج", type: "start", details: "بداية فعاليات البرنامج التطوعي" }],
+            "2025-02-05": [{ title: "حدث مهم", type: "normal", details: "تفاصيل عن الحدث المهم" }],
+            "2025-02-17": [
+                { title: "حدث مهم يوم الثلاثاء", type: "important", details: "عرض كامل" },
+                { title: "التفاصيل", type: "normal", details: "تفاصيل إضافية عن العرض" }
+            ],
+            "2025-02-24": [{ title: "اجتماع المتطوعين", type: "normal", details: "اجتماع لمناقشة تقدم العمل" }],
+            "2025-03-05": [{ title: "ورشة عمل", type: "normal", details: "ورشة عمل تدريبية للمتطوعين" }],
+            "2025-03-10": [{ title: "زيارة ميدانية", type: "important", details: "زيارة ميدانية لموقع العمل" }],
+            "2025-03-15": [{ title: "نشاط توعوي", type: "normal", details: "نشاط توعوي في المدارس" }]
+        };
+
+        // تهيئة متغيرات التقويم
+        let currentDate = new Date();
+        currentDate.setDate(1); // تعيين أول يوم في الشهر الحالي
+
+        // وظيفة لعرض التقويم
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            
+            // تحديث عنوان الشهر
+            const monthNames = ["يناير", "فبراير", "مارس", "إبريل", "مايو", "يونيو", 
+                              "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            document.getElementById('current-month').textContent = monthNames[month];
+            
+            // الحصول على أول يوم في الشهر (0 = الأحد، 6 = السبت)
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            // الحصول على عدد أيام الشهر
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // الحصول على عدد أيام الشهر السابق
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            // تاريخ اليوم
+            const today = new Date();
+            
+            // حساب عدد الأسابيع وتوحيد ارتفاع خلايا التقويم
+            const numberOfWeeks = Math.ceil((daysInMonth + firstDay) / 7);
+            
+            // تحديث ارتفاع خلايا التقويم لتكون متساوية
+            const cellHeight = Math.floor((grid.parentElement.clientHeight - 45) / numberOfWeeks);
+            document.documentElement.style.setProperty('--cell-height', `${cellHeight}px`);
+            
+            // حساب عدد الخلايا في التقويم (أسابيع كاملة)
+            const totalCells = numberOfWeeks * 7;
+            
+            // إنشاء خلايا الأيام السابقة (من الشهر السابق)
+            for (let i = 0; i < firstDay; i++) {
+                const day = daysInPrevMonth - firstDay + i + 1;
+                const prevMonth = month === 0 ? 11 : month - 1;
+                const prevYear = month === 0 ? year - 1 : year;
+                
+                const cell = createDayCell(day, true, prevYear, prevMonth);
+                grid.appendChild(cell);
+            }
+            
+            // إنشاء خلايا أيام الشهر الحالي
+            for (let i = 1; i <= daysInMonth; i++) {
+                const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                
+                const cell = createDayCell(i, false, year, month, isToday);
+                grid.appendChild(cell);
+            }
+            
+            // إنشاء خلايا الأيام اللاحقة (من الشهر التالي)
+            const remainingCells = totalCells - (daysInMonth + firstDay);
+            for (let i = 1; i <= remainingCells; i++) {
+                const nextMonth = month === 11 ? 0 : month + 1;
+                const nextYear = month === 11 ? year + 1 : year;
+                
+                const cell = createDayCell(i, true, nextYear, nextMonth);
+                grid.appendChild(cell);
+            }
+        }
+
+        // وظيفة لإنشاء خلية يوم في التقويم
+        function createDayCell(day, isOtherMonth, year, month, isToday = false) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day';
+            if (isOtherMonth) cell.classList.add('other-month');
+            if (isToday) cell.classList.add('today');
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = day;
+            cell.appendChild(dayNumber);
+            
+            // تنسيق التاريخ لمطابقة مفتاح الأحداث (YYYY-MM-DD)
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            // إضافة الأحداث للخلية إذا وجدت
+            if (events[dateString]) {
+                events[dateString].forEach(event => {
+                    const eventElement = document.createElement('div');
+                    eventElement.className = `event ${event.type}`;
+                    eventElement.textContent = event.title;
+                    cell.appendChild(eventElement);
+                    
+                    // إضافة تفاصيل الحدث
+                    if (event.details) {
+                        const detailsElement = document.createElement('div');
+                        detailsElement.className = 'event-details';
+                        detailsElement.textContent = event.details;
+                        cell.appendChild(detailsElement);
+                    }
+                });
+            }
+            
+            return cell;
+        }
+
+        // أزرار التنقل بين الشهور
+        document.getElementById('prev-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+
+        document.getElementById('next-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        // وظائف التايم لاين
+        function initTimeline() {
+            const timelinePoints = document.querySelectorAll('.timeline-point');
+            
+            timelinePoints.forEach((point, index) => {
+                point.addEventListener('click', () => {
+                    // إزالة الحالة النشطة من كل النقاط
+                    timelinePoints.forEach(p => p.classList.remove('active'));
+                    
+                    // تعيين الحالة النشطة للنقطة المنقورة
+                    point.classList.add('active');
+                    
+                    // تحديث النقاط المكتملة
+                    timelinePoints.forEach((p, i) => {
+                        if (i < index) {
+                            p.classList.add('done');
+                            p.classList.remove('active');
+                        } else if (i > index) {
+                            p.classList.remove('done');
+                            p.classList.remove('active');
+                        }
+                    });
+                    
+                    // تحديث شريط التقدم
+                    const progress = document.querySelector('.timeline-progress');
+                    const progressWidth = (index / (timelinePoints.length - 1)) * 100;
+                    progress.style.width = `${progressWidth}%`;
+                });
+            });
+        }
+
+        // تهيئة عناصر الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+            initTimeline();
+        });
+    </script>
+</body>
+</html>

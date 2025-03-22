@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج وئام - الملف الشخصي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Main Layout */
+        .layout {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #5198B7, #6FA16B);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 0 15px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .program-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .program-name {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 12px 25px;
+            color: white;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+        }
+        
+        .nav-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .support-section {
+            padding: 15px 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: auto;
+            text-align: right;
+        }
+        
+        .support-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .support-email {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            margin-right: 280px;
+            width: calc(100% - 280px);
+            padding: 20px;
+            height: 100vh;
+        }
+        
+        /* Header Section */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+            margin-top: 2px;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .welcome-text {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2D3748;
+            margin-bottom: 5px;
+        }
+        
+        .role-text {
+            font-size: 16px;
+            color: #718096;
+        }
+        
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background-color: #E53E3E;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-btn {
+            background-color: #E53E3E;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Timeline تحسينات */
+        .timeline-section {
+            position: relative;
+            padding: 2px;
+            margin-top: 2px;
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 0;
+            margin: 45px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            height: 6px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+            z-index: 1;
+            border-radius: 3px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            height: 6px;
+            width: 50%;
+            background: linear-gradient(90deg, #4C9F9F 0%, #5FAD5F 100%);
+            transform: translateY(-50%);
+            z-index: 2;
+            border-radius: 3px;
+        }
+
+        .timeline-point {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 5px solid #4C9F9F;
+            background: white;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .timeline-point.active {
+            background: #4C9F9F;
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-point.done {
+            background: #5FAD5F;
+            border-color: #5FAD5F;
+        }
+
+        /* إضافة العناوين تحت كل نقطة */
+        .timeline-point::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 40px;
+            right: 50%;
+            transform: translateX(50%) translateY(10px);
+            font-size: 14px;
+            font-weight: bold;
+            color: #384B57;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .timeline-point:hover::after {
+            opacity: 1;
+            transform: translateX(50%) translateY(0);
+        }
+
+        /* إضافة تأثير التوهج للنقاط */
+        .timeline-point::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: rgba(76, 159, 159, 0.1);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .timeline-point:hover::before {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .timeline-point.done::before {
+            background-color: rgba(95, 173, 95, 0.1);
+        }
+        
+        /* Profile Card */
+        .profile-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 2px;
+
+
+        }
+        
+        .profile-header {
+            padding: 10px;
+            border-bottom: 1px solid #EEE;
+            text-align: right;
+        }
+        
+        .profile-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2D3748;
+        }
+        
+        .profile-content {
+            padding: 10px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .edit-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2D3748;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-role {
+            color: #718096;
+            margin-bottom: 2px;
+        }
+        
+        .profile-info {
+            width: 100%;
+            max-width: 500px;
+            background-color: #F1F0F0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 5px;
+        }
+        
+        .info-row {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #2D3748;
+            text-align: right;
+            min-width: 120px;
+        }
+        
+        .info-value {
+            background-color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            flex: 1;
+            text-align: right;
+            direction: ltr;
+            text-align: right;
+        }
+        
+        .gender-dropdown {
+            background-color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            flex: 1;
+            text-align: right;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .dropdown-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div>
+                <div class="program-logo">
+                    <div class="logo-circle">
+                        <img src="/api/placeholder/120/120" alt="برنامج وئام">
+                    </div>
+                    <div class="program-name">برنامج وئام</div>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#" class="nav-item">
+                        <span>الصفحة الرئيسية</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item">
+                        <span>جدول البرنامج</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item">
+                        <span>فريقي</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item">
+                        <span>متابعة الحضور والغياب</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item">
+                        <span>شهادة التطوع</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item">
+                        <span>ملف التطوع</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </a>
+                    
+                    <a href="#" class="nav-item active">
+                        <span>الملف الشخصي</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="support-section">
+                <div class="support-title">الدعم الفني</div>
+                <a href="mailto:Awninfo@gmail.com" class="support-email">
+                    Awninfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar with User Info -->
+            <div class="top-bar">
+                <div class="user-info">
+                    <h1 class="welcome-text">أهلاً سارة</h1>
+                    <p class="role-text">مسؤول التواصل الإعلامي</p>
+                </div>
+                
+                <div class="user-controls">
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D3748" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">1</span>
+                    </div>
+                    
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D3748" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    
+                    <button class="logout-btn">تسجيل الخروج</button>
+                </div>
+            </div>
+            
+            <!-- Timeline Progress -->
+            <div class="timeline-section">
+                <div class="timeline-points">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-progress"></div>
+                    <div class="timeline-point done" data-label="البداية"></div>
+                    <div class="timeline-point active" data-label="المنتصف"></div>
+                    <div class="timeline-point" data-label="النهاية"></div>
+                </div>
+            </div>
+            
+            <!-- Profile Card - Simple Version -->
+            <div class="profile-container">
+                <div class="profile-header">
+                    <h2 class="profile-title">الملف الشخصي</h2>
+                </div>
+                
+                <div class="profile-content">
+                    <!-- Profile Avatar -->
+                    <div class="profile-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        
+                        <div class="edit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Name with Edit Icon -->
+                    <div class="profile-name">
+                        سارة محمد علي
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
+                            <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Profile Role -->
+                    <div class="profile-role">مسؤول التواصل الإعلامي</div>
+                    
+                    <!-- Profile Info (Simplified) -->
+                    <div class="profile-info">
+                        <div class="info-row">
+                            <div class="info-value">Sara@gmail.com</div>
+                            <div class="info-label">البريد الإلكتروني</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-value">1136663787</div>
+                            <div class="info-label">الهوية الوطنية</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-value">0555837766</div>
+                            <div class="info-label">رقم الجوال</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="gender-dropdown">
+                                أنثى
+                                <span class="dropdown-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="info-label">الجنس</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // إعداد التايملاين
+            initializeTimeline();
+            
+            // Profile image edit functionality
+            const editIcon = document.querySelector('.edit-icon');
+            if (editIcon) {
+                editIcon.addEventListener('click', function() {
+                    // Create a file input element
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+                    document.body.appendChild(fileInput);
+                    
+                    // Trigger click on the file input
+                    fileInput.click();
+                    
+                    // Handle file selection
+                    fileInput.addEventListener('change', function() {
+                        if (this.files && this.files[0]) {
+                            const reader = new FileReader();
+                            
+                            reader.onload = function(e) {
+                                // Create an image element
+                                const profileAvatar = document.querySelector('.profile-avatar');
+                                const svgIcon = profileAvatar.querySelector('svg');
+                                
+                                if (svgIcon) {
+                                    // Remove the default avatar icon
+                                    profileAvatar.removeChild(svgIcon);
+                                }
+                                
+                                // Check if there's already an image
+                                let imgElement = profileAvatar.querySelector('img');
+                                
+                                if (!imgElement) {
+                                    // Create a new image if it doesn't exist
+                                    imgElement = document.createElement('img');
+                                    imgElement.style.width = '100%';
+                                    imgElement.style.height = '100%';
+                                    imgElement.style.borderRadius = '50%';
+                                    imgElement.style.objectFit = 'cover';
+                                    profileAvatar.insertBefore(imgElement, profileAvatar.firstChild);
+                                }
+                                
+                                // Set the image source
+                                imgElement.src = e.target.result;
+                            };
+                            
+                            reader.readAsDataURL(this.files[0]);
+                        }
+                        
+                        // Remove the file input
+                        document.body.removeChild(fileInput);
+                    });
+                });
+            }
+            // تهيئة التايم لاين مع العناوين والتأثيرات البصرية
+            function initializeTimeline() {
+                // إضافة تأثير النقر على نقاط التايم لاين
+                const timelinePoints = document.querySelectorAll('.timeline-point');
+                
+                timelinePoints.forEach((point, index) => {
+                    // إضافة استماع لحدث النقر على كل نقطة
+                    point.addEventListener('click', () => {
+                        // فقط إذا لم تكن النقطة نشطة بالفعل
+                        if (!point.classList.contains('active')) {
+                            // إزالة الفئة النشطة من جميع النقاط
+                            timelinePoints.forEach(p => p.classList.remove('active'));
+                            
+                            // تعيين كل النقاط السابقة كمكتملة
+                            for (let i = 0; i <= index; i++) {
+                                timelinePoints[i].classList.add(i < index ? 'done' : 'active');
+                            }
+                            
+                            // إزالة تصنيف مكتمل من النقاط اللاحقة
+                            for (let i = index + 1; i < timelinePoints.length; i++) {
+                                timelinePoints[i].classList.remove('done', 'active');
+                            }
+                            
+                            // تحديث شريط التقدم
+                            updateProgressBar(index);
+                        }
+                    });
+                });
+                
+                // تحديث شريط التقدم بناءً على النقطة النشطة
+                function updateProgressBar(activeIndex) {
+                    const progress = document.querySelector('.timeline-progress');
+                    const progressPercentage = (activeIndex / (timelinePoints.length - 1)) * 100;
+                    progress.style.width = `${progressPercentage}%`;
+                }
+                
+                // تهيئة القيمة الأولية لشريط التقدم
+                const initialActiveIndex = Array.from(timelinePoints).findIndex(point => 
+                    point.classList.contains('active')
+                );
+                
+                if (initialActiveIndex >= 0) {
+                    updateProgressBar(initialActiveIndex);
+                }
+            }
+            
+            // Name edit functionality
+            const nameEdit = document.querySelector('.profile-name svg');
+            if (nameEdit) {
+                nameEdit.addEventListener('click', function() {
+                    const profileName = document.querySelector('.profile-name');
+                    const currentName = profileName.childNodes[0].nodeValue.trim();
+                    
+                    // Create input for editing
+                    const inputEl = document.createElement('input');
+                    inputEl.type = 'text';
+                    inputEl.value = currentName;
+                    inputEl.style.fontSize = '22px';
+                    inputEl.style.fontWeight = 'bold';
+                    inputEl.style.width = '200px';
+                    inputEl.style.textAlign = 'center';
+                    
+                    // Replace name with input
+                    profileName.replaceChild(inputEl, profileName.childNodes[0]);
+                    inputEl.focus();
+                    
+                    // Handle saving
+                    const saveNameChanges = function() {
+                        const newName = inputEl.value.trim() || currentName;
+                        const textNode = document.createTextNode(newName);
+                        profileName.replaceChild(textNode, inputEl);
+                    };
+                    
+                    inputEl.addEventListener('blur', saveNameChanges);
+                    inputEl.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            saveNameChanges();
+                        }
+                    });
+                });
+            }
+            
+            // Gender dropdown functionality
+            const genderDropdown = document.querySelector('.gender-dropdown');
+            if (genderDropdown) {
+                genderDropdown.addEventListener('click', function() {
+                    const currentGender = this.childNodes[0].nodeValue.trim();
+                    const newGender = currentGender === 'ذكر' ? 'أنثى' : 'ذكر';
+                    this.childNodes[0].nodeValue = newGender;
+                });
+            }
+            
+            // Make info values editable
+            const infoValues = document.querySelectorAll('.info-value');
+            infoValues.forEach(value => {
+                value.addEventListener('click', function() {
+                    const currentValue = this.textContent;
+                    
+                    // Create input for editing
+                    const inputEl = document.createElement('input');
+                    inputEl.type = 'text';
+                    inputEl.value = currentValue;
+                    inputEl.style.width = '100%';
+                    inputEl.style.border = 'none';
+                    inputEl.style.textAlign = 'center';
+                    
+                    // Replace value with input
+                    this.textContent = '';
+                    this.appendChild(inputEl);
+                    inputEl.focus();
+                    
+                    // Handle saving
+                    const saveChanges = function() {
+                        value.textContent = inputEl.value.trim() || currentValue;
+                    };
+                    
+                    inputEl.addEventListener('blur', saveChanges);
+                    inputEl.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            saveChanges();
+                        }
+                    });
+                });
+            });
+            
+            // Logout button functionality
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                        // تنفيذ عملية تسجيل الخروج
+                        window.location.href = 'login.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    <title>برنامج وئام - شهادات التطوع</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+            margin: 0;
+            width: 303px;
+            background: linear-gradient(180deg, #5198B7 0%, #6FA16B 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: white;
+            justify-content: space-between;
+            transition: width 0.5s ease-in-out;
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+            padding: 20px 10px;
+            padding-top: 100px;
+        }
+
+        .sidebar.collapsed .profile-section {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar.collapsed .program-name,
+        .sidebar.collapsed .nav-links a span,
+        .sidebar.collapsed .support-text {
+            display: none;
+         
+        }
+
+        .sidebar.collapsed .nav-links a {
+            justify-content: center;
+        }
+
+        .profile-section {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+        }
+
+        .profile-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #fff;
+            background-image: url("Images/Image-prog.jpg");
+            background-size: cover;
+            background-position: center;
+            transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+            border: 4px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar.collapsed .profile-circle {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease, justify-content 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        .program-name {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: opacity 0.5s ease-in-out;
+            padding-right: 15px;
+        }
+
+        .support-section {
+            width: 100%;
+            margin-top: auto;
+            text-align: right;
+            font-size: 16px;
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: justify-content 0.5s ease-in-out;
+        }
+
+        .sidebar.collapsed .support-section {
+            justify-content: center;
+        }
+
+        .support-icon {
+            width: 20px;
+            height: 20px;
+            margin-top: 20px;
+        }
+
+        .support-section a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 4px;
+        }
+
+        /* تحسينات زر التوجل */
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            left: -20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #5198B7 0%, #6FA16B 100%);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .toggle-btn.clicked {
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+            stroke: white;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .sidebar.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Main content transition */
+        .main-content {
+            transition: margin-right 0.5s ease-in-out;
+            flex: 1;
+            margin-right: 303px;
+            padding: 20px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .welcome-text {
+            font-size: 30px;
+            color: #2C3E50;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .role-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-icon {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+        }
+        
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        /* Timeline styles */
+        .timeline-section {
+            position: relative;
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 0;
+            margin: 25px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            height: 6px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+            z-index: 1;
+            border-radius: 3px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            height: 6px;
+            width: 50%;
+            background: linear-gradient(90deg, #4C9F9F 0%, #5FAD5F 100%);
+            transform: translateY(-50%);
+            z-index: 2;
+            border-radius: 3px;
+        }
+
+        .timeline-point {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 5px solid #4C9F9F;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .timeline-point.active {
+            background: #4C9F9F;
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-point.done {
+            background: #5FAD5F;
+            border-color: #5FAD5F;
+        }
+
+        /* إضافة العناوين تحت كل نقطة */
+        .timeline-point::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 30px;
+            right: 50%;
+            transform: translateX(50%) translateY(10px);
+            font-size: 14px;
+            font-weight: bold;
+            color: #384B57;
+            white-space: nowrap;
+        }
+
+        /* Certificates section styles */
+        .section-title {
+            font-size: 26px;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .certificates-wrapper {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .white-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 1px #ACACAC solid;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .certificates-list {
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .certificate-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .certificate-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .certificate-item:last-child {
+            border-bottom: none;
+        }
+        
+        .certificate-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .certificate-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .certificate-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        .certificate-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .certificate-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .certificate-program {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .certificate-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .certificate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .certificate-btn:hover {
+            background-color: #e0f2f1;
+            transform: translateY(-2px);
+        }
+        
+        .certificate-btn svg {
+            width: 20px;
+            height: 20px;
+            color: #384B57;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #666;
+            height: 100%;
+            gap: 15px;
+            padding: 50px 20px;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .empty-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .empty-message {
+            font-size: 16px;
+            color: #666;
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <div class="sidebar">
+            <div class="toggle-btn" onclick="toggleSidebar()">
+                <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </div>
+            <div class="profile-section">
+                <div class="profile-circle"></div>
+            </div>
+            <div class="program-name">
+                برنامج وئام
+            </div>
+            <nav class="nav-links">
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span>الصفحة الرئيسية</span>
+                </a>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <span>جدول البرنامج</span>
+                </a>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <polyline points="17 11 19 13 23 9"/>
+                    </svg>
+                    <span>فريقي</span>
+                </a>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>متابعة الحضور والغياب</span>
+                </a>
+                <a href="#" class="active">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    </svg>
+                    <span>شهادة التطوع</span>
+                </a>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>ملف التطوع</span>
+                </a>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>الملف الشخصي</span>
+                </a>
+            </nav>
+            <div class="support-section">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="support-icon">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>      
+                <div class="support-text">
+                    <b>الدعم الفني:</b>
+                    <br><a href="mailto:Awninfo@gmail.com">Awninfo@gmail.com</a></br>
+                </div>
+            </div>
+        </div>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <h1 class="welcome-text">أهلاً سارة</h1>
+                    <p class="role-text">مسؤول التواصل الإعلامي</p>
+                </div>
+                <div class="user-controls">
+                    <div class="notification-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">1</span>
+                    </div>
+                    <div class="user-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#384B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <button class="logout-btn">تسجيل الخروج</button>
+                </div>
+            </header>
+            
+            <!-- Timeline component -->
+            <div class="timeline-section">
+                <div class="timeline-points">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-progress"></div>
+                    <div class="timeline-point done" data-label="البداية"></div>
+                    <div class="timeline-point active" data-label="المنتصف"></div>
+                    <div class="timeline-point" data-label="النهاية"></div>
+                </div>
+            </div>
+            
+            <!-- Certificates section -->
+            <section class="certificates-wrapper">
+                <h2 class="section-title">الشهادات</h2>
+                
+                <div class="white-container">
+                    <div class="certificates-list">
+                        <!-- Certificate item -->
+                        <div class="certificate-item">
+                            <div class="certificate-info">
+                                <div class="certificate-logo">
+                                    <img src="Images/Image-prog.jpg" alt="شعار برنامج وئام" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;50&quot; height=&quot;50&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;%236FA16B&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;></path></svg>'">
+                                </div>
+                                <div class="certificate-details">
+                                    <div class="certificate-title">شهادة تطوع - برنامج وئام</div>
+                                    <div class="certificate-program">
+                                        <span>برنامج وئام للتنمية المستدامة</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="certificate-actions">
+                                <button class="certificate-btn" title="عرض الشهادة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                                <button class="certificate-btn" title="تحميل الشهادة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificate item -->
+                        <div class="certificate-item">
+                            <div class="certificate-info">
+                                <div class="certificate-logo">
+                                    <img src="Images/image-prog2.png" alt="شعار برنامج عطاء" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;50&quot; height=&quot;50&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;%236FA16B&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z&quot;></path></svg>'">
+                                </div>
+                                <div class="certificate-details">
+                                    <div class="certificate-title">شهادة تطوع - برنامج عطاء</div>
+                                    <div class="certificate-program">
+                                        <span>برنامج عطاء للعمل التطوعي</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="certificate-actions">
+                                <button class="certificate-btn" title="عرض الشهادة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                                <button class="certificate-btn" title="تحميل الشهادة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Empty state - will be shown if no certificates are available -->
+                        <!--
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <h3 class="empty-title">لا توجد شهادات بعد</h3>
+                            <p class="empty-message">سيتم عرض الشهادات عند اكتمال البرنامج التطوعي وصدور الشهادات.</p>
+                        </div>
+                        -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // تبديل الشريط الجانبي
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            // تحديث أيقونة التوجل
+            const toggleBtn = document.querySelector('.toggle-btn');
+            toggleBtn.classList.add('clicked');
+            setTimeout(() => {
+                toggleBtn.classList.remove('clicked');
+            }, 300);
+            
+            // تعديل محتوى الصفحة
+            const mainContent = document.querySelector('.main-content');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                mainContent.style.marginRight = '80px';
+                localStorage.setItem('sidebarState', 'collapsed');
+            } else {
+                mainContent.style.marginRight = '303px';
+                localStorage.setItem('sidebarState', 'expanded');
+            }
+        }
+
+        // استعادة حالة السايدبار عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            const savedState = localStorage.getItem('sidebarState');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (savedState === 'collapsed') {
+                sidebar.classList.add('collapsed');
+                mainContent.style.marginRight = '80px';
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.style.marginRight = '303px';
+            }
+            
+            // تهيئة التايم لاين
+            initializeTimeline();
+            
+            // إضافة وظائف أزرار معاينة وتحميل الشهادات
+            const viewButtons = document.querySelectorAll('.certificate-btn[title="عرض الشهادة"]');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const certificateTitle = this.closest('.certificate-item').querySelector('.certificate-title').textContent;
+                    alert(`عرض شهادة: ${certificateTitle}`);
+                    // يمكن هنا إضافة كود لعرض الشهادة في نافذة منبثقة أو صفحة جديدة
+                });
+            });
+            
+            const downloadButtons = document.querySelectorAll('.certificate-btn[title="تحميل الشهادة"]');
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const certificateTitle = this.closest('.certificate-item').querySelector('.certificate-title').textContent;
+                    alert(`جاري تحميل شهادة: ${certificateTitle}`);
+                    // يمكن هنا إضافة كود لتحميل ملف الشهادة
+                });
+            });
+        });
+        
+        // تهيئة التايم لاين
+        function initializeTimeline() {
+            const timelinePoints = document.querySelectorAll('.timeline-point');
+            
+            timelinePoints.forEach((point, index) => {
+                point.addEventListener('click', () => {
+                    // إذا لم تكن النقطة نشطة بالفعل
+                    if (!point.classList.contains('active')) {
+                        // إزالة الفئات النشطة والمكتملة من جميع النقاط
+                        timelinePoints.forEach(p => {
+                            p.classList.remove('active', 'done');
+                        });
+                        
+                        // تعيين النقاط السابقة كمكتملة
+                        for (let i = 0; i < index; i++) {
+                            timelinePoints[i].classList.add('done');
+                        }
+                        
+                        // تعيين النقطة الحالية كنشطة
+                        point.classList.add('active');
+                        
+                        // تحديث شريط التقدم
+                        updateProgressBar(index);
+                    }
+                });
+            });
+            
+            // تحديث شريط التقدم
+            function updateProgressBar(activeIndex) {
+                const progress = document.querySelector('.timeline-progress');
+                const progressPercentage = (activeIndex / (timelinePoints.length - 1)) * 100;
+                progress.style.width = `${progressPercentage}%`;
+            }
+            
+            // التهيئة الأولية
+            const initialActiveIndex = Array.from(timelinePoints).findIndex(point => 
+                point.classList.contains('active')
+            );
+            
+            if (initialActiveIndex >= 0) {
+                updateProgressBar(initialActiveIndex);
+            }
+        }
+    </script>
+</body>
+</html>
