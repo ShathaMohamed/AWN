@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'HONORSansArabicUI';
+    src: url('Font/alfont_com_HONORSansArabicUI-R.woff2') format('woff2'),
+         url('Font/alfont_com_HONORSansArabicUI-R.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'HONORSansArabicUI', Arial, Tahoma, sans-serif;
+}
+
+
+input {
+    text-align: right;
+}

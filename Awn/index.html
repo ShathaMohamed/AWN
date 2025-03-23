@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+    <link rel="stylesheet" href="CSS/mainStyle.css">
+    <title>تسجيل الدخول - عون</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(to right, #5198B7, #6EA16D);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .login-box img.logo-login {
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .login-box h1 {
+            color: #6EA16D;
+            margin: 5px 0 3px;
+            font-size: 1.6rem;
+        }
+        
+        .login-box h3 {
+            color: #6EA16D;
+            margin: 0 0 15px;
+            font-weight: normal;
+            font-size: 1.1rem;
+        }
+        
+        .form-container {
+            background: #F5F5F5;
+            padding: 18px;
+            border-radius: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .form-container h3 {
+            color: #236C8F;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .form-container form {
+            width: 100%;
+        }
+        
+        .form-container input {
+            width: 100%;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border: 1px solid #DDD;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border 0.3s;
+        }
+        
+        .form-container input:focus {
+            outline: none;
+            border-color: #5198B7;
+        }
+        
+        .form-container button {
+            width: 100%;
+            background: linear-gradient(to right, #5198B7, #6EA16D);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+        
+        .form-container button:hover {
+            opacity: 0.9;
+        }
+        
+        .form-container a {
+            display: block;
+            margin-top: 15px;
+            color: #236C8F;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .form-container a:hover {
+            color: #6EA16D;
+        }
+        
+        .register-options {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .register-options a {
+            flex: 1;
+            text-decoration: none;
+        }
+        
+        .register-options button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 8px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+            height: 40px;
+        }
+        
+        .volunteer-btn {
+            background: linear-gradient(to right, #5DA1A3, #6EA16D);
+        }
+      
+        .organizatioan-btn {
+            background: linear-gradient(to right,#5DA1A3, #6EA16D);
+        }
+        
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 20px 15px;
+            }
+            
+            .form-container {
+                padding: 20px 15px;
+            }
+            
+            .register-options {
+                flex-direction: column;
+            }
+            
+            .login-box h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+    <link rel="icon" type="image/png" sizes="64x64" href="Images/small-logo-removebg-preview (1).png">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <img src="Images/Logo.png" alt="شعار عون" class="logo-login">
+            <h1>أهلاً بك في عـــون</h1>
+            <h3>موقع لإدارة التطوع</h3>
+            
+            <div class="form-container">
+                <h3>تسجيل الدخول</h3>
+                <form >
+                    <input type="text" name="email" placeholder="البريد الإلكتروني">
+                    <input type="password" name="password" placeholder="كلمة المرور">
+                    <button type="submit">تسجيل الدخول</button>
+                </form>
+                <a href="PsswdReset.html">هل نسيت كلمة المرور؟</a>
+            </div>
+            
+            <div class="register-options">
+                <a href="register-vol.html">
+                    <button class="volunteer-btn">
+                        إنشاء حساب متطوع
+                    </button>
+                </a>
+                <a href="register-org.html">
+                    <button class="organizatioan-btn">
+                        إنشاء حساب مؤسسة
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
