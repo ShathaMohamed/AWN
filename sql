@@ -35,12 +35,15 @@ CREATE TABLE Employee (
     employee_id INT PRIMARY KEY AUTO_INCREMENT,
     organization_id INT NOT NULL,
     full_name VARCHAR(255) NOT NULL,
-    -- role ENUM('Admin', 'Supervisor', 'Staff') NOT NULL,
+    role VARCHAR(45) NOT NULL,
     phone VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    premitions VARCHAR(255),
+    availability boolean,
     password_hash VARCHAR(255) NOT NULL,
     FOREIGN KEY (organization_id) REFERENCES Organization(organization_id) ON DELETE CASCADE
 );
+
 
 -- 4
 /* Volunteer Table
@@ -50,9 +53,10 @@ CREATE TABLE Volunteer (
     first_name VARCHAR(255) NOT NULL,
     middle_name VARCHAR(255),
     last_name VARCHAR(255) NOT NULL,
-    gender ENUM('Male','Female'),
+    gender ENUM('ذكر', 'أنثى'),
     phone VARCHAR(20) UNIQUE,
     email VARCHAR(255) UNIQUE NOT NULL,
+    Education VARCHAR(255) NOT NULL, 
     password_hash VARCHAR(255) NOT NULL,
     skills ENUM('التواصل والاستماع', 'العمل الجماعي',
     'حل المشكلات', 'حل النزاعات', 'القيادة والإدارة', 'التعاطف والرحمة',
@@ -76,7 +80,6 @@ CREATE TABLE Event (
     E_name VARCHAR(255) NOT NULL,
     description TEXT,
     event_date DATETIME NOT NULL,
-    location VARCHAR(255),
     FOREIGN KEY (program_id) REFERENCES Program(program_id) ON DELETE CASCADE
 );
 
@@ -193,6 +196,8 @@ CREATE TABLE Team (
     program_id INT NOT NULL,
     employee_id INT NOT NULL,  -- Employee who manages the team
     t_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    whats_up_link VARCHAR(255), 
     FOREIGN KEY (program_id) REFERENCES Program(program_id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES Employee(employee_id) 
 );
@@ -300,6 +305,35 @@ CREATE TABLE Organization_Employees (
     FOREIGN KEY (employee_id) REFERENCES Employee(employee_id) ON DELETE CASCADE
 );
 
+
+CREATE TABLE Notification (
+    notification_id INT PRIMARY KEY AUTO_INCREMENT,
+    
+    title VARCHAR(255) NOT NULL,      -- title
+    
+    content TEXT NOT NULL,            --  content
+
+    recipient_type ENUM('Volunteer', 'Employee') NOT NULL,  -- Who receives it
+    recipient_id INT NOT NULL,           -- Volunteer ID or Employee ID
+    
+    sender_id INT,                       -- Optional: Who sent the notification (admin or employee)
+    
+    notification_type ENUM('Task', 'Event', 'Report', 'General') DEFAULT 'General',
+    
+    related_task_id INT,
+    related_event_id INT,
+    related_program_id INT,
+    
+    is_read BOOLEAN DEFAULT FALSE,       -- Track read status
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (recipient_id) 
+        REFERENCES Volunteer(volunteer_id) ON DELETE CASCADE,
+    
+    FOREIGN KEY (related_task_id) REFERENCES Task(task_id) ON DELETE SET NULL,
+    FOREIGN KEY (related_event_id) REFERENCES Event(event_id) ON DELETE SET NULL,
+    FOREIGN KEY (related_program_id) REFERENCES Program(program_id) ON DELETE SET NULL
+);
 
 -- **********************************
 -- 22
