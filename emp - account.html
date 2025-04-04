@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج عطاء - الملف الشخصي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-point {
+            width: 16px;
+            height: 16px;
+            background-color: #4a5568;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .progress-point.start {
+            left: 0;
+            background-color: #68d391;
+        }
+        
+        .progress-point.middle {
+            left: 50%;
+        }
+        
+        .progress-point.end {
+            left: 100%;
+        }
+        
+        .progress-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            text-align: center;
+        }
+        
+        .exit-button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #4a8db7, #5aaa75);
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0 20px 0 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sidebar-logo::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 20px auto 0;
+        }
+        
+        .sidebar-menu {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 25px;
+            cursor: pointer;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .menu-text {
+            font-weight: 500;
+            font-size: 17px;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .tech-support {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            text-align: right;
+        }
+        
+        .support-email {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        /* Profile Section */
+        .profile-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3748;
+            text-align: right;
+        }
+        
+        .profile-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .edit-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+        
+        .profile-name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-name-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .edit-name {
+            cursor: pointer;
+            display: flex;
+        }
+        
+        .profile-role {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        /* Profile Info Container Styling - To match the image */
+        .profile-info-container {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            color: #4a5568;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .info-value {
+            text-align: left;
+            color: #718096;
+            background-color: white;
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 180px;
+            border: 1px solid #eee;
+        }
+        
+        .info-input {
+            flex: 2;
+            text-align: right;
+        }
+        
+        .info-input input {
+            width: 100%;
+            height: 40px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 0 10px;
+            direction: ltr;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Ellipse 5.png" alt="برنامج عطاء">
+                <div class="sidebar-logo-text">برنامج عطاء</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item" id="homeBtn">
+                    <span class="menu-text">الصفحة الرئيسية</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="scheduleBtn">
+                    <span class="menu-text">جدول البرنامج</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="volunteersBtn">
+                    <span class="menu-text">المتطوعين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                
+                
+                <div class="menu-item" id="attendanceBtn">
+                    <span class="menu-text">متابعة الحضور والغياب</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="qrCodeBtn">
+                    <span class="menu-text">عرض QR Code</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="8" y1="9" x2="16" y2="9"></line>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="17" x2="16" y2="17"></line>
+                        </svg>
+                    </span>
+                </div>
+        
+               
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="tech-support">الدعم الفني</div>
+                <a href="mailto:Awminfo@gmail.com" class="support-email">
+                    Awminfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="header">
+                <div class="logo-header">
+                    احمد سعد
+                </div>
+                <div style="color: #718096; font-size: 14px;">
+                  
+                </div>
+                <div class="user-actions">
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                    <div class="icon-button" id="accountBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div style="position: relative; flex: 1;">
+                    <div class="progress-bar">
+                        <div class="progress-point start"></div>
+                        <div class="progress-point middle" style="background-color: #68d391;"></div>
+                        <div class="progress-point end"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <div class="progress-label">البداية</div>
+                        <div class="progress-label">النهاية</div>
+                    </div>
+                </div>
+                <div style="width: 30px;"></div>
+                <button class="exit-button">تسجيل الخروج</button>
+            </div>
+            
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-title">الملف الشخصي</div>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="edit-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-name">
+                        <div class="profile-name-text">احمد سعد</div>
+                        <div class="edit-name">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-role">الدور المسند للموظف</div>
+                    
+                    <div class="profile-info-container">
+                        <div class="info-row">
+                            <div class="info-value">ahmad@gmail.com</div>
+                            <div class="info-label">البريد الإلكتروني</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-value">1136663787</div>
+                            <div class="info-label">الهوية الوطنية</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-value">0555837766</div>
+                            <div class="info-label">رقم الجوال</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation to all available pages
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = 'emp - interface.html';
+            });
+            
+            document.getElementById('scheduleBtn').addEventListener('click', function() {
+                window.location.href = 'emp - calendar.html';
+            });
+            
+            document.getElementById('volunteersBtn').addEventListener('click', function() {
+                window.location.href = 'emp - volunteers.html';
+            });
+            
+            
+            document.getElementById('attendanceBtn').addEventListener('click', function() {
+                window.location.href = 'emp - attendance.html';
+            });
+            
+            document.getElementById('qrCodeBtn').addEventListener('click', function() {
+                window.location.href = 'emp - qr.html';
+            });
+            // Logout button
+          // Add this code to the script section of all your pages
+
+// Logout button functionality
+document.querySelector('.exit-button').addEventListener('click', function() {
+    if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        // In a real application, you would clear any authentication tokens or cookies here
+        
+        // Example: Clear session storage
+        sessionStorage.clear();
+        
+        // Example: Clear local storage (if used for auth)
+        // localStorage.clear();
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
+});
+            
+            // Edit profile functionality
+            const editNameBtn = document.querySelector('.edit-name');
+            
+            editNameBtn.addEventListener('click', function() {
+                const nameElement = document.querySelector('.profile-name-text');
+                const currentName = nameElement.textContent;
+                
+                // Create input element for editing
+                const inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.value = currentName;
+                inputElement.style.fontSize = '24px';
+                inputElement.style.fontWeight = 'bold';
+                inputElement.style.width = '200px';
+                inputElement.style.border = '1px solid #ddd';
+                inputElement.style.borderRadius = '5px';
+                inputElement.style.padding = '5px 10px';
+                inputElement.style.textAlign = 'right';
+                
+                // Replace name text with input
+                nameElement.innerHTML = '';
+                nameElement.appendChild(inputElement);
+                inputElement.focus();
+                
+                // Save name when enter is pressed or blur
+                const saveNewName = function() {
+                    const newName = inputElement.value.trim();
+                    if (newName) {
+                        nameElement.textContent = newName;
+                    } else {
+                        nameElement.textContent = currentName;
+                    }
+                };
+                
+                inputElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        saveNewName();
+                    }
+                });
+                
+                inputElement.addEventListener('blur', saveNewName);
+            });
+            
+            // Toggle editable fields
+            const infoValues = document.querySelectorAll('.info-value');
+            
+            infoValues.forEach(infoValue => {
+                const row = infoValue.closest('.info-row');
+                const label = row.querySelector('.info-label').textContent;
+                
+                infoValue.addEventListener('click', function() {
+                    const currentValue = this.textContent;
+                    
+                    // Create input element
+                    const inputElement = document.createElement('input');
+                    inputElement.type = label.includes('بريد') ? 'email' : 'text';
+                    inputElement.value = currentValue;
+                    inputElement.style.width = '100%';
+                    inputElement.style.height = '40px';
+                    inputElement.style.padding = '0 10px';
+                    inputElement.style.borderRadius = '5px';
+                    inputElement.style.border = '1px solid #ddd';
+                    inputElement.style.direction = 'ltr';
+                    inputElement.style.textAlign = 'right';
+                    
+                    // Replace value with input
+                    this.innerHTML = '';
+                    this.appendChild(inputElement);
+                    inputElement.focus();
+                    
+                    // Save value when enter is pressed or blur
+                    const saveNewValue = function() {
+                        const newValue = inputElement.value.trim();
+                        
+                        // Validate based on field type
+                        let isValid = true;
+                        let errorMessage = '';
+                        
+                        if (label.includes('بريد')) {
+                            // Email validation
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            isValid = emailRegex.test(newValue);
+                            errorMessage = 'يرجى إدخال بريد إلكتروني صحيح';
+                        } else if (label.includes('هوية')) {
+                            // ID validation (10 digits)
+                            const idRegex = /^\d{10}$/;
+                            isValid = idRegex.test(newValue);
+                            errorMessage = 'يجب أن تتكون الهوية من 10 أرقام';
+                        } else if (label.includes('جوال')) {
+                            // Phone validation (10 digits starting with 05)
+                            const phoneRegex = /^05\d{8}$/;
+                            isValid = phoneRegex.test(newValue);
+                            errorMessage = 'يجب أن يبدأ رقم الجوال بـ 05 ويتكون من 10 أرقام';
+                        }
+                        
+                        if (!isValid) {
+                            alert(errorMessage);
+                            inputElement.focus();
+                            return;
+                        }
+                        
+                        // Remove input and put back text
+                        infoValue.removeChild(inputElement);
+                        infoValue.textContent = newValue || currentValue;
+                    };
+                    
+                    inputElement.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            saveNewValue();
+                        }
+                    });
+                    
+                    inputElement.addEventListener('blur', saveNewValue);
+                });
+            });
+            
+            // Edit avatar functionality - open file picker
+            document.querySelector('.edit-avatar').addEventListener('click', function() {
+                // Create hidden file input
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.style.display = 'none';
+                document.body.appendChild(fileInput);
+                
+                // Trigger click on file input
+                fileInput.click();
+                
+                // Handle file selection
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            // Create image element
+                            const imgElement = document.createElement('img');
+                            imgElement.src = e.target.result;
+                            imgElement.style.width = '100%';
+                            imgElement.style.height = '100%';
+                            imgElement.style.borderRadius = '50%';
+                            imgElement.style.objectFit = 'cover';
+                            
+                            // Replace avatar content with image
+                            const avatarCircle = document.querySelector('.avatar-circle');
+                            avatarCircle.innerHTML = '';
+                            avatarCircle.appendChild(imgElement);
+                        };
+                        
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                    
+                    // Remove the file input
+                    document.body.removeChild(fileInput);
+                });
+            });
+            
+            // Add account button navigation - universal code for all pages
+            document.getElementById('accountBtn').addEventListener('click', function() {
+                window.location.href = 'emp account.html';
+            });
+        });
+    </script>
+</body>
+</html>

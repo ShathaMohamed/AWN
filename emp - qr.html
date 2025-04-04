@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج عطاء - عرض QR Code</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-point {
+            width: 16px;
+            height: 16px;
+            background-color: #4a5568;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .progress-point.start {
+            left: 0;
+            background-color: #68d391;
+        }
+        
+        .progress-point.middle {
+            left: 50%;
+        }
+        
+        .progress-point.end {
+            left: 100%;
+        }
+        
+        .progress-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            text-align: center;
+        }
+        
+        .exit-button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #4a8db7, #5aaa75);
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0 20px 0 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sidebar-logo::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 20px auto 0;
+        }
+        
+        .sidebar-menu {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 25px;
+            cursor: pointer;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .menu-text {
+            font-weight: 500;
+            font-size: 17px;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .tech-support {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            text-align: right;
+        }
+        
+        .support-email {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        /* QR Code Section */
+        .qrcode-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .qrcode-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+        
+        .qrcode-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .qrcode-image {
+            width: 250px;
+            height: 250px;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        .enlarge-button {
+            background-color: #4A9DBF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+        
+        /* Fullscreen QR Code Overlay */
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+        
+        .fullscreen-qrcode {
+            width: 80%;
+            max-width: 500px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .close-fullscreen {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .fullscreen-qrcode-image {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Ellipse 5.png" alt="برنامج عطاء">
+                <div class="sidebar-logo-text">برنامج عطاء</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item" id="homeBtn">
+                    <span class="menu-text">الصفحة الرئيسية</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="scheduleBtn">
+                    <span class="menu-text">جدول البرنامج</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="volunteersBtn">
+                    <span class="menu-text">المتطوعين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                
+                <div class="menu-item" id="attendanceBtn">
+                    <span class="menu-text">متابعة الحضور والغياب</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item active" id="qrCodeBtn">
+                    <span class="menu-text">عرض QR Code</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                </div>
+            
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="tech-support">الدعم الفني</div>
+                <a href="mailto:Awminfo@gmail.com" class="support-email">
+                    Awminfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="header">
+                <div class="logo-header">
+                    برنامج عطاء
+                </div>
+                <div class="user-actions">
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                    <div class="icon-button" id="accountBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div style="position: relative; flex: 1;">
+                    <div class="progress-bar">
+                        <div class="progress-point start"></div>
+                        <div class="progress-point middle"></div>
+                        <div class="progress-point end"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <div class="progress-label">البداية</div>
+                        <div class="progress-label">النهاية</div>
+                    </div>
+                </div>
+                <div style="width: 30px;"></div>
+                <button class="exit-button">تسجيل الخروج</button>
+            </div>
+            
+            <div class="qrcode-section">
+                <h2 class="qrcode-title">رمز QR للبرنامج</h2>
+                
+                <div class="qrcode-container">
+                    <div class="qrcode-image">
+                        <!-- QR Code SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="230" height="230" viewBox="0 0 37 37">
+                            <path d="M1,1h7v7h-7z M10,1h1v2h1v-1h1v-1h3v2h-1v-1h-1v1h-1v3h-1v1h1v1h-1v1h1v1h-2v-1h-1v-1h1v-1h-1z M17,1h2v1h-2z M20,1h7v7h-7z M2,2v5h5v-5z M21,2v5h5v-5z M3,3h3v3h-3z M22,3h3v3h-3z M9,4h1v1h-1z M15,4h1v1h-1z M17,4h3v1h-3z M8,6h1v1h-1z M11,6h1v1h-1z M17,6h2v3h-1v-2h-1z M20,6h1v1h-1z M14,7h1v1h-1z M19,7h1v2h1v1h-4v-1h1v-1h1z M9,8h1v1h1v1h-1v1h-1v-1h-1v-1h1z M14,8h1v1h-1z M1,10h1v1h1v1h-1v1h-1z M7,10h1v1h-1z M24,10h1v2h-2v-1h1z M4,11h3v1h-3z M9,11h1v1h-1z M21,11h2v1h-2z M26,11h1v1h-1z M3,12h1v2h-1z M7,12h1v1h-1z M11,12h1v1h-1z M15,12h1v1h-1z M23,12h1v1h-1z M25,12h1v2h-1z M28,12h1v1h-1z M7,13h2v2h-1v-1h-1z M13,13h2v1h-1v1h-1z M16,13h1v1h-1z M18,13h1v1h-1z M20,13h1v2h-2v-1h1z M27,13h1v1h-1z M10,14h1v3h-2v-2h1z M16,14h1v1h-1z M23,14h1v1h-1z M26,14h4v1h2v1h-3v-1h-2v1h-1z M4,15h1v1h-1z M6,15h1v2h-3v-1h2z M14,15h1v1h-1z M16,15h1v3h-1v-1h-1v-1h1z M19,15h1v1h-1z M22,15h1v1h1v2h-1v-1h-1z M24,15h1v1h-1z M31,15h1v1h-1z M33,15h1v4h-1v-2h-1v-1h1z M25,16h1v1h-1z M30,16h1v1h-1z M1,17h7v7h-7z M13,17h1v1h-1z M18,17h2v1h-2z M24,17h1v1h-1z M26,17h3v1h-3z M30,17h1v1h-1z M2,18v5h5v-5z M9,18h1v1h1v1h-2z M14,18h3v1h-3z M20,18h1v1h1v1h-1v2h-2v-1h1z M24,18h1v1h-1z M29,18h1v2h-1z M3,19h3v3h-3z M12,19h1v1h-1z M15,19h1v1h-1z M17,19h1v2h-1z M25,19h1v1h-1z M31,19h1v1h-1z M34,19h1v1h-1z M9,20h1v1h-1z M12,20h2v1h-2z M15,20h1v1h-1z M24,20h1v1h-1z M26,20h2v2h-1v-1h-1z M9,21h1v1h2v-1h1v5h-1v-3h-1v1h-1v1h-2v-1h1z M23,21h1v1h-1z M29,21h1v2h-1z M31,21h3v1h-1v1h-1v-1h-1z M15,22h1v1h1v1h-2z M18,22h1v3h-2v-1h-1v-1h2z M24,22h1v1h-1z M35,22h1v3h-1z M13,23h1v4h-5v-1h4z M20,23h3v1h-3z M26,23h3v3h-1v-2h-2z M30,23h2v1h-2z M33,23h1v1h-1z M14,24h1v1h-1z M17,24h1v1h-1z M20,24h1v2h-1v1h-1v-2h1z M22,24h1v2h-1z M24,24h1v3h1v1h-2v-1h-1v-2h1z M30,24h3v1h-1v1h-1v2h-1v-3h1v-1h-1z M17,25h1v1h-1z M34,25h2v1h-2z M9,26h2v1h-2z M15,26h1v1h-1z M29,26h1v1h-1z M34,26h1v1h-1z M21,27h3v1h-3z M26,27h1v1h-1z M28,27h1v1h-1z M20,28h1v1h-1z M22,28h2v1h-2z M25,28h1v1h1v1h-2z M27,28h1v2h-2v-1h1z M29,28h1v1h-1z M31,28h2v1h-2z M34,28h1v1h1v1h-1v1h-1v1h-1v-2h1v-1h-1v-1h1z M20,29h1v2h-1z M23,29h1v1h-1z M30,29h1v3h-1v-1h-1v-1h1z M33,29h1v1h-1z M21,30h2v1h-2z M24,30h1v1h-1z M33,30h1v1h-1z M21,31h1v1h-1z M23,31h1v1h-1z M25,31h4v1h-2v2h-1v-1h-1v-1h-1v-1z M33,31h1v1h-1z M22,32h1v1h-1z M24,32h1v1h-1z M32,32h1v1h-1z M20,33h1v1h-1z M23,33h1v1h-1z M27,33h1v1h-1z M29,33h2v2h-3v-1h2v-1h-1z M20,34h1v1h-1z M22,34h1v1h-1z M25,34h2v1h-2z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    
+                    <button class="enlarge-button" id="enlargeQRBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <polyline points="9 21 3 21 3 15"></polyline>
+                            <line x1="21" y1="3" x2="14" y2="10"></line>
+                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                        </svg>
+                        تكبير الشاشة
+                    </button>
+                </div>
+                
+                <div class="qrcode-info" style="max-width: 500px; margin: 0 auto; text-align: right; color: #4a5568;">
+                    <p>
+                        يمكنك مشاركة رمز QR هذا مع المتطوعين لتسهيل عملية التسجيل في البرنامج.
+                        قم بمسح الرمز باستخدام كاميرا الهاتف للوصول مباشرة إلى صفحة البرنامج.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fullscreen QR Code Overlay -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <div class="fullscreen-qrcode">
+            <button class="close-fullscreen" id="closeFullscreenBtn">&times;</button>
+            <img src="" alt="QR Code" class="fullscreen-qrcode-image" id="fullscreenQRImage">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation to all available pages
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = 'emp Home Page.html';
+            });
+            document.getElementById('volunteersBtn').addEventListener('click', function() {
+                window.location.href = 'emp volunteers.html';
+            });
+            
+            document.getElementById('scheduleBtn').addEventListener('click', function() {
+                window.location.href = 'emp calendar.html';
+            });
+            
+            document.getElementById('attendanceBtn').addEventListener('click', function() {
+                window.location.href = 'emp attendance.html';
+            });
+            
+            document.getElementById('qrCodeBtn').addEventListener('click', function() {
+                window.location.href = 'emp qr.html';
+            });
+            
+            document.getElementById('accountBtn').addEventListener('click', function() {
+                window.location.href = 'emp account.html';
+            });
+            // Logout button
+          // Add this code to the script section of all your pages
+
+// Logout button functionality
+document.querySelector('.exit-button').addEventListener('click', function() {
+    if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        // In a real application, you would clear any authentication tokens or cookies here
+        
+        // Example: Clear session storage
+        sessionStorage.clear();
+        
+        // Example: Clear local storage (if used for auth)
+        // localStorage.clear();
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    }
+});
+            
+            // Add account button navigation
+      
+            
+            // QR Code functionality
+            const enlargeQRBtn = document.getElementById('enlargeQRBtn');
+            const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+            const closeFullscreenBtn = document.getElementById('closeFullscreenBtn');
+            const fullscreenQRImage = document.getElementById('fullscreenQRImage');
+            
+            // Convert SVG to data URL for fullscreen view
+            const qrSVG = document.querySelector('.qrcode-image svg');
+            const svgData = new XMLSerializer().serializeToString(qrSVG);
+            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const svgURL = URL.createObjectURL(svgBlob);
+            
+            // Set the image source
+            fullscreenQRImage.src = svgURL;
+            
+            // Show fullscreen overlay
+            enlargeQRBtn.addEventListener('click', function() {
+                fullscreenOverlay.classList.add('active');
+            });
+            
+            // Close fullscreen overlay
+            closeFullscreenBtn.addEventListener('click', function() {
+                fullscreenOverlay.classList.remove('active');
+            });
+            
+            // Close overlay when clicking outside the QR code
+            fullscreenOverlay.addEventListener('click', function(e) {
+                if (e.target === fullscreenOverlay) {
+                    fullscreenOverlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

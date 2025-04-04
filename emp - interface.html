@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج عطاء - الصفحة الرئيسية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row; /* For RTL */
+            overflow: hidden; /* Prevent double scrollbars */
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #4a8db7, #5aaa75);
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 0 20px 0 0; /* Changed for RTL */
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .sidebar-logo::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 20px auto 0;
+        }
+        
+        .sidebar-menu {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 25px;
+            cursor: pointer;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            border-right: 4px solid white;
+        }
+        
+        .menu-text {
+            font-weight: 500;
+            font-size: 17px;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .tech-support {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            text-align: right;
+        }
+        
+        .support-email {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .icon-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        
+        .org-name {
+            font-size: 14px;
+            color: #718096;
+            font-weight: normal;
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-point {
+            width: 16px;
+            height: 16px;
+            background-color: #4a5568;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .progress-point.start {
+            left: 0;
+            background-color: #68d391;
+        }
+        .progress-point.middle {
+            left: 50%;
+        }
+        
+        .progress-point.end {
+            left: 100%;
+        }
+        
+        .progress-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            text-align: center;
+        }
+        
+        .exit-button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* Reports Card */
+        .reports-card {
+            grid-column: 1;
+            grid-row: 1;
+        }
+        
+        .no-reports {
+            background-color: #f8f5f5;
+            color: #b0a5a5;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        /* Add Structure Card */
+        .add-structure-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            cursor: pointer;
+        }
+        
+        /* Assign Tasks Card */
+        .assign-tasks-card {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            justify-content: flex-end;
+        }
+        
+        .tab {
+            padding: 5px 15px;
+            background-color: #edf2f7;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .tab.active {
+            background-color: #718096;
+            color: white;
+        }
+        
+        .search-input {
+            display: flex;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .search-input input {
+            flex: 1;
+            height: 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 0 15px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        
+        .task-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: right;
+        }
+        
+        .task-textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 10px;
+            resize: none;
+            margin-bottom: 15px;
+        }
+        
+        .assign-button {
+            background-color: #a0aec0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            float: left;
+        }
+        
+        /* Send Message Card */
+        .send-message-card {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        
+        .send-button {
+            background-color: #a0aec0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            float: left;
+        }
+        
+        /* Circle Button */
+        .circle-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .circle-button svg {
+            width: 30px;
+            height: 30px;
+            color: #4a5568;
+        }
+        
+        .button-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4a5568;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Ellipse 5.png" alt="برنامج عطاء">
+                <div class="sidebar-logo-text">برنامج عطاء</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item active" id="homeBtn">
+                    <span class="menu-text">الصفحة الرئيسية</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="scheduleBtn">
+                    <span class="menu-text">جدول البرنامج</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="volunteersBtn">
+                    <span class="menu-text">المتطوعين</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="attendanceBtn">
+                    <span class="menu-text">متابعة الحضور والغياب</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <div class="menu-item" id="qrCodeBtn">
+                    <span class="menu-text">عرض QR Code</span>
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="tech-support">الدعم الفني</div>
+                <a href="mailto:Awminfo@gmail.com" class="support-email">
+                    Awminfo@gmail.com
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="header">
+                <div class="logo-header">
+                    <span>احمد سعد</span>
+                </div>
+                <div class="user-actions">
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+              
+            <div class="progress-section">
+                <div style="position: relative; flex: 1;">
+                    <div class="progress-bar">
+                        <div class="progress-point start"></div>
+                        <div class="progress-point middle"></div>
+                        <div class="progress-point end"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <div class="progress-label">البداية</div>
+                        <div class="progress-label">النهاية</div>
+                    </div>
+                </div>
+                <div style="width: 30px;"></div>
+                <button class="exit-button">تسجيل الخروج</button>
+            </div>
+            
+            <div class="cards-grid">
+                <!-- Reports Card -->
+                <div class="card reports-card">
+                    <h2 class="card-title">التقارير المرسلة</h2>
+                    <div class="no-reports">لا يوجــد</div>
+                </div>
+                
+                <!-- Add Structure Card -->
+                <div class="card add-structure-card">
+                    <div class="circle-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="button-text">إضافة هيكلة البرنامج</div>
+                </div>
+                
+                <!-- Assign Tasks Card -->
+                <div class="card assign-tasks-card">
+                    <h2 class="card-title">إسناد المهام</h2>
+                    <div class="tabs">
+                        <div class="tab">فريق</div>
+                        <div class="tab active">فرد</div>
+                    </div>
+                    <div class="search-input">
+                        <input type="text" placeholder="الاسم">
+                        <span class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="task-label">المهمة</div>
+                    <textarea class="task-textarea"></textarea>
+                    <button class="assign-button">إسناد</button>
+                </div>
+                
+                <!-- Send Message Card -->
+                <div class="card send-message-card">
+                    <h2 class="card-title">إرسال رسالة</h2>
+                    <div class="tabs">
+                        <div class="tab">فريق</div>
+                        <div class="tab active">فرد</div>
+                    </div>
+                    <div class="search-input">
+                        <input type="text" placeholder="الاسم">
+                        <span class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="task-label">الرسالة</div>
+                    <textarea class="task-textarea"></textarea>
+                    <button class="send-button">إرسال</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            
+            document.getElementById('scheduleBtn').addEventListener('click', function() {
+                window.location.href = 'emp - calendar.html';
+            });
+            
+            document.getElementById('volunteersBtn').addEventListener('click', function() {
+                window.location.href = 'emp - volunteers.html';
+            });
+            
+            document.getElementById('attendanceBtn').addEventListener('click', function() {
+                window.location.href = 'emp - attendance.html';
+            });
+            
+            document.getElementById('qrCodeBtn').addEventListener('click', function() {
+                window.location.href = 'emp - qr.html';
+            });
+            
+            // Account icon navigation
+            document.getElementById('accountBtn').addEventListener('click', function() {
+                window.location.href = 'emp - account.html';
+            });
+            
+            // Logout button
+            document.querySelector('.exit-button').addEventListener('click', function() {
+                if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                    // Clear session storage
+                    sessionStorage.clear();
+                    // Redirect to login page
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs in the same group
+                    const tabsContainer = this.closest('.tabs');
+                    tabsContainer.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                });
+            });
+            
+            // Program structure button
+            document.querySelector('.add-structure-card').addEventListener('click', function() {
+                alert('سيتم توجيهك إلى صفحة إضافة هيكلة البرنامج');
+                // In a real app: window.location.href = 'program-structure.html';
+            });
+        });
+    </script>
+</body>
+</html>
